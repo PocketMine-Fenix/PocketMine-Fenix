@@ -233,8 +233,13 @@ class WorldManager{
 			return false;
 		}
 		if(!($provider instanceof WritableWorldProvider)){
+			$message = "World \"$name\" is in an unsupported format and needs to be upgraded";
 			if(!$autoUpgrade){
-				throw new UnsupportedWorldFormatException("World \"$name\" is in an unsupported format and needs to be upgraded");
+				$this->server->getLogger()->error($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_level_loadError(
+					$name,
+					KnownTranslationFactory::pocketmine_level_unsupportedFormat($message)
+				)));
+				return false;
 			}
 			$this->server->getLogger()->notice($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_level_conversion_start($name)));
 

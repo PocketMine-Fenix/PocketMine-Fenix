@@ -65,6 +65,12 @@ Yes â€” that is the core feature. Clients from 1.20.0 through the latest re
 </details>
 
 <details>
+<summary><b>Can I import Java Edition worlds?</b></summary>
+
+Partially. Worlds from <b>Java 1.12.2 or older</b> are read and automatically converted to the Bedrock format on first load (the original files are backed up). Modern Java worlds (1.13+, data version &gt; 1343) use a completely different chunk format that is not supported — convert them with an external tool such as <a href="https://amber.openmc.dev/">Amber</a> or <a href="https://github.com/Chunker-Dev/Chunker">Chunker</a> before importing. The server detects this case and shows a clear error instead of crashing.
+</details>
+
+<details>
 <summary><b>Can the server update itself?</b></summary>
 
 Yes. Type <code>updatepm</code> in the console or as an OP in-game: it downloads the newest release and swaps it into place, then you just restart. The server also warns ops on join when an update is available (toggleable in <code>pocketmine.yml</code>).

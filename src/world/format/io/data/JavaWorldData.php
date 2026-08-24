@@ -32,6 +32,7 @@ use pocketmine\utils\Filesystem;
 use pocketmine\utils\Utils;
 use pocketmine\VersionInfo;
 use pocketmine\world\format\io\exception\CorruptedWorldException;
+use pocketmine\world\format\io\exception\UnsupportedWorldFormatException;
 use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\World;
 use pocketmine\world\WorldCreationOptions;
@@ -60,6 +61,15 @@ class JavaWorldData extends BaseNbtWorldData{
 	private const TAG_SIZE_ON_DISK = "SizeOnDisk";
 	private const TAG_THUNDERING = "thundering";
 	private const TAG_THUNDER_TIME = "thunderTime";
+	private const TAG_DATA_VERSION = "DataVersion";
+
+	/**
+	 * Highest Java Edition data version whose chunk format we can read.
+	 * 1343 = Minecraft Java 1.12.2, the last pre-flattening release. Worlds from
+	 * 1.13 onwards use paletted block states which are not compatible with the
+	 * legacy Anvil reader.
+	 */
+	public const MAX_SUPPORTED_DATA_VERSION = 1343;
 
 	public static function generate(string $path, string $name, WorldCreationOptions $options, int $version = 19133) : void{
 		//TODO, add extra details
@@ -110,6 +120,16 @@ class JavaWorldData extends BaseNbtWorldData{
 		if(!($dataTag instanceof CompoundTag)){
 			throw new CorruptedWorldException("Missing '" . self::TAG_ROOT_DATA . "' key or wrong type");
 		}
+
+		$dataVersion = $dataTag->getInt(self::TAG_DATA_VERSION, 0);
+		if($dataVersion > self::MAX_SUPPORTED_DATA_VERSION){
+			throw new UnsupportedWorldFormatException(
+				"This Java Edition world uses data version $dataVersion (Minecraft 1.13+). " .
+				"Only pre-flattening worlds (data version <= " . self::MAX_SUPPORTED_DATA_VERSION . ", Minecraft <= 1.12.2) can be imported. " .
+				"Please convert the world with an external tool such as Amulet or Chunker first."
+			);
+		}
+
 		return $dataTag;
 	}
 

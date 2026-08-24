@@ -54,6 +54,13 @@ Sí — es justo su función principal. Clientes desde 1.20.0 hasta la última v
 </details>
 
 <details>
+<summary><b>¿Puedo importar mundos de Java Edition?</b></summary>
+
+Parcialmente. Los mundos de <b>Java 1.12.2 o anteriores</b> se leen y convierten automáticamente al formato Bedrock en la primera carga (los originales se respaldan). Los mundos modernos (1.13+, data version &gt; 1343) usan un formato de chunks incompatible — conviértelos antes con una herramienta externa como <a href="https://amber.openmc.dev/">Amber</a> o <a href="https://github.com/Chunker-Dev/Chunker">Chunker</a>. El servidor detecta este caso y muestra un error claro en lugar de crashear.
+
+</details>
+
+<details>
 <summary><b>¿Puede actualizarse solo?</b></summary>
 
 Sí. Escribe <code>updatepm</code> en la consola o como OP dentro del juego: descarga la última release y la deja lista; luego solo reinicia el servidor. Además avisa a los OPs al entrar cuando hay una versión nueva (configurable en <code>pocketmine.yml</code>, clave <code>auto-updater.notify-ops-on-join</code>).
