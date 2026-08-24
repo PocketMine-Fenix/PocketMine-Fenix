@@ -23,11 +23,11 @@ Its headline feature is **native multi-version support**: players on different M
 
 | Minecraft version | Protocol | Status |
 |-------------------|----------|--------|
-| 1.26.30 | 1001 | ✅ Latest (reference implementation) |
+| 1.26.44 / 1.26.40 | 2169 / 2168 | ✅ Latest (reference implementation) |
+| 1.26.30 | 1001 | ✅ Supported |
 | 1.26.20 | 975 | ✅ Supported |
 | 1.26.10 | 944 | ✅ Supported |
 | 1.26.0 | 924 | ✅ Supported |
-| 1.21.130 | 898 | ✅ Supported |
 | ... | ... | ✅ Supported |
 | 1.20.0 | 589 | ✅ Oldest supported |
 
