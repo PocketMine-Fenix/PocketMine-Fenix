@@ -61,7 +61,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
  *  - java_state_mappings_geyser.nbt (GeyserMC mappings, MIT)
  */
 
-if($argc !== 2){
+if(!isset($argc, $argv) || $argc !== 2){
 	fwrite(STDERR, "Usage: php generate-java-block-mappings.php <resources/java-mappings directory>\n");
 	exit(1);
 }
