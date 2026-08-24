@@ -46,7 +46,7 @@ use const STDERR;
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 /*
- * Generates libs/bedrock-data/java_block_renames.json - a mapping of Java Edition
+ * Generates resources/java-mappings/java_block_renames.json - a mapping of Java Edition
  * block identifier -> Bedrock identifier for every block whose name differs
  * between editions (e.g. grass_block -> grass, water -> flowing_water).
  *
@@ -56,13 +56,13 @@ require dirname(__DIR__) . '/vendor/autoload.php';
  * Bedrock name differs. Names are therefore anchored per-block, which is all we
  * need because renames never vary between variants of the same block.
  *
- * Inputs (bundled under libs/bedrock-data/):
+ * Inputs (bundled under resources/java-mappings/):
  *  - java_blocks_prismarine.json    (PrismarineJS minecraft-data, MIT)
  *  - java_state_mappings_geyser.nbt (GeyserMC mappings, MIT)
  */
 
 if($argc !== 2){
-	fwrite(STDERR, "Usage: php generate-java-block-mappings.php <libs/bedrock-data directory>\n");
+	fwrite(STDERR, "Usage: php generate-java-block-mappings.php <resources/java-mappings directory>\n");
 	exit(1);
 }
 $dataPath = rtrim($argv[1], '/');
