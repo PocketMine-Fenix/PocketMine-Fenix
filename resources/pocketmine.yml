@@ -1,4 +1,4 @@
-# Main configuration file for PocketMine-MP
+# Main configuration file for PocketMine-Fenix
 # These settings are the ones that cannot be included in server.properties
 # Some of these settings are safe, others can break your server if modified incorrectly
 # New settings/defaults won't appear automatically in this file when upgrading.
@@ -147,7 +147,9 @@ anonymous-statistics:
   host: stats.pocketmine.net
 
 auto-updater:
-  enabled: true
+  #Disabled by default: PocketMine-Fenix releases are announced on GitHub.
+  #The legacy pmmp update API is no longer maintained.
+  enabled: false
   on-update:
     warn-console: true
   #Can be development, alpha, beta or stable.
