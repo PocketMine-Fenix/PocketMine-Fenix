@@ -50,7 +50,8 @@ final class GarbageCollectorManager{
 	 * GC runs faster than this are logged at debug level to avoid console spam.
 	 * Slow runs (possible lag spikes) are still surfaced at info level.
 	 */
-	private const LOG_SLOW_RUN_MS = 10.0;
+	private const LOG_SLOW_RUN_MS = 50.0;
+	//Normal GC runs are silent; only runs exceeding this threshold produce a console warning.
 
 	private int $threshold = self::GC_THRESHOLD_DEFAULT;
 	private int $collectionTimeTotalNs = 0;
@@ -104,19 +105,15 @@ final class GarbageCollectorManager{
 		$time = $end - $start;
 		$this->collectionTimeTotalNs += $time;
 		$this->runs++;
-		$message = sprintf(
-			"Run #%d took %s ms (%s -> %s roots, %s cycles collected) - cumulative GC time: %s ms",
-			$this->runs,
-			number_format($time / 1_000_000, 2),
-			$rootsBefore,
-			$rootsAfter,
-			$cycles,
-			number_format($this->collectionTimeTotalNs / 1_000_000, 2)
-		);
 		if($time / 1_000_000 >= self::LOG_SLOW_RUN_MS){
-			$this->logger->info($message);
-		}else{
-			$this->logger->debug($message);
+			$this->logger->warning(sprintf(
+				"Slow GC run #%d took %s ms (%s -> %s roots, %s cycles collected)",
+				$this->runs,
+				number_format($time / 1_000_000, 2),
+				$rootsBefore,
+				$rootsAfter,
+				$cycles
+			));
 		}
 
 		return $cycles;
