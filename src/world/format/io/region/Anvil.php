@@ -57,12 +57,7 @@ class Anvil extends RegionWorldProvider{
 
 	protected function getModernTranslator() : JavaBlockStateTranslator{
 		if($this->modernTranslator === null){
-			$this->modernTranslator = new JavaBlockStateTranslator(
-				BlockStateDictionary::loadFromString(
-					Filesystem::fileGetContents(\pocketmine\BEDROCK_DATA_PATH . 'canonical_block_states.nbt'),
-					Filesystem::fileGetContents(\pocketmine\BEDROCK_DATA_PATH . 'block_state_meta_map.json')
-				)
-			);
+			$this->modernTranslator = new JavaBlockStateTranslator();
 		}
 		return $this->modernTranslator;
 	}
