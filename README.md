@@ -25,12 +25,12 @@ If you host a Bedrock server and your players are spread across old and new game
 
 | Feature | Description |
 |---------|-------------|
-| **Multiversion clients** | Supports ~30 client protocol versions simultaneously |
-| **Plugin API (5.x)** | Full API compatibility with PocketMine-MP plugins from Poggit and elsewhere |
-| **Multi-world support** | Multiple worlds per server, LevelDB and Anvil formats |
-| **Performance** | PHP 8.1-8.5, async compression, multi-threaded generation |
-| **Easy updates** | Documented process to add every new Minecraft version |
-| **Java world import** | Reads and converts Java Edition worlds (see details below) |
+| 🌉 **Multiversion clients** | Supports ~30 client protocol versions simultaneously |
+| 🔌 **Plugin API (5.x)** | Full API compatibility with PocketMine-MP plugins from Poggit and elsewhere |
+| 🗺️ **Multi-world support** | Multiple worlds per server, LevelDB and Anvil formats |
+| ⚡ **Performance** | PHP 8.1-8.5, async compression, multi-threaded generation |
+| 🛠️ **Easy updates** | Documented process to add every new Minecraft version + `/updatepm` command |
+| 🌍 **Java world import** | Reads and converts Java Edition worlds (see details below) |
 
 ## Supported Minecraft versions
 
@@ -38,17 +38,17 @@ Players can join from these versions (older clients are gracefully rejected with
 
 | Minecraft version | Protocol | Status |
 |-------------------|----------|--------|
-| 1.26.44 / 1.26.40 | 2169 / 2168 | Latest (reference implementation) |
-| 1.26.30 | 1001 | Supported |
-| 1.26.20 | 975 | Supported |
-| 1.26.10 | 944 | Supported |
-| 1.26.0 | 924 | Supported |
-| 1.21.x series | 685 - 898 | Supported |
-| 1.20.x series | 589 - 671 | Oldest supported |
+| 1.26.44 / 1.26.40 | 2169 / 2168 | ✅ Latest (reference implementation) |
+| 1.26.30 | 1001 | ✅ Supported |
+| 1.26.20 | 975 | ✅ Supported |
+| 1.26.10 | 944 | ✅ Supported |
+| 1.26.0 | 924 | ✅ Supported |
+| 1.21.x series | 685 - 898 | ✅ Supported |
+| 1.20.x series | 589 - 671 | ✅ Oldest supported |
 
 You can restrict which versions may join via `network.accepted-protocols` in `pocketmine.yml`.
 
-Note: Players joining from older versions may see some newer blocks/items as fallbacks (e.g. update blocks), since their client simply doesn't know those features yet.
+Note: ℹ️ Players joining from older versions may see some newer blocks/items as fallbacks (e.g. update blocks), since their client simply doesn't know those features yet.
 
 ## Frequently asked questions (FAQ)
 
