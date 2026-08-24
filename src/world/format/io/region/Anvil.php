@@ -25,8 +25,6 @@ namespace pocketmine\world\format\io\region;
 
 use pocketmine\block\Block;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\convert\BlockStateDictionary;
-use pocketmine\utils\Filesystem;
 use pocketmine\world\format\io\data\JavaWorldData;
 use pocketmine\world\format\io\LoadedChunkData;
 use pocketmine\world\format\PalettedBlockArray;
