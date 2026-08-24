@@ -23,7 +23,7 @@ Si administras un servidor de Bedrock y tus jugadores están repartidos entre ve
 | 🔌 **API de plugins PMMP 5.x** | Los plugins existentes de PocketMine funcionan sin cambios |
 | 🗺️ **Multi-mundo** | Varios mundos por servidor, formatos LevelDB y Anvil |
 | ⚡ **Rendimiento** | PHP 8.1–8.5, compresión asíncrona, generación multi-hilo |
-| 🛠️ **Fácil de actualizar** | Proceso documentado para cada nueva versión de Minecraft ([UPDATING.md](/UPDATING.md)) |
+| 🛠️ **Fácil de actualizar** | Comando `updatepm` integrado y proceso documentado ([UPDATING.md](/UPDATING.md)) |
 
 ## Versiones de Minecraft soportadas
 
@@ -54,9 +54,9 @@ Sí — es justo su función principal. Clientes desde 1.20.0 hasta la última v
 </details>
 
 <details>
-<summary><b>¿Cómo lo actualizo cuando salga una versión nueva de Minecraft?</b></summary>
+<summary><b>¿Puede actualizarse solo?</b></summary>
 
-El soporte se publica aquí mismo. Sigue las [Releases](https://github.com/PocketMine-Fenix/PocketMine-Fenix/releases); el proceso está documentado en [UPDATING.md](/UPDATING.md).
+Sí. Escribe <code>updatepm</code> en la consola o como OP dentro del juego: descarga la última release y la deja lista; luego solo reinicia el servidor. Además avisa a los OPs al entrar cuando hay una versión nueva (configurable en <code>pocketmine.yml</code>, clave <code>auto-updater.notify-ops-on-join</code>).
 </details>
 
 <details>
