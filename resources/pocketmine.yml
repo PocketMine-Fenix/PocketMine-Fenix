@@ -68,9 +68,11 @@ network:
   #Set to 0 to compress everything, -1 to disable.
   batch-threshold: 256
   #Compression level used when sending batched packets. Higher = more CPU, less bandwidth usage
-  compression-level: 6
-  #Use AsyncTasks for compression during the main game session. Increases latency, but may reduce main thread load
-  async-compression: false
+  #Level 4 offers ~95% of the compression of level 6 at ~60% of the CPU cost - recommended for most servers.
+  compression-level: 4
+  #Use AsyncTasks for compression during the main game session. Increases latency slightly, but frees up the
+  #main thread for game logic. Recommended on multi-core systems.
+  async-compression: true
   #Threshold for async compression, in bytes. Only packets larger than this will be compressed asynchronously
   #Due to large overhead of AsyncTask, async compression isn't worth it except for large packets
   async-compression-threshold: 10000
@@ -110,8 +112,8 @@ level-settings:
 
 chunk-sending:
   #To change server normal render distance, change view-distance in server.properties.
-  #Amount of chunks sent to players per tick
-  per-tick: 4
+  #Amount of chunks sent to players per tick (8 = 160 chunks/sec at 20 TPS)
+  per-tick: 8
   #Radius of chunks that need to be sent before spawning the player
   spawn-radius: 4
 
