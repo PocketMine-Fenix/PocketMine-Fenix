@@ -34,10 +34,10 @@
       "composer-runtime-api": "^2.0",
       "adhocore/json-comment": "~1.2.0",
       "netresearch/jsonmapper": "~v6.0.0",
-      "axolotl-pm/bedrock-block-upgrade-schema": "~5.2.0+bedrock-1.21.110",
-      "nethergamesmc/bedrock-data": "dev-master#81210858a543bab44cb08ece6962aa12ff037b55",
-      "axolotl-pm/bedrock-item-upgrade-schema": "1.18.0+bedrock-1.26.40",
-      "nethergamesmc/bedrock-protocol": "dev-master#9faffcaa23d9a339bed3047a612c480872f2224b",
+      "fenix/bedrock-block-upgrade-schema": "^5.2.0",
+      "fenix/bedrock-data": "^6.8.0",
+      "fenix/bedrock-item-upgrade-schema": "^1.18.0",
+      "fenix/bedrock-protocol": "^58.1.0",
       "pocketmine/binaryutils": "^0.2.1",
       "pocketmine/callback-validator": "~1.0.4",
       "pocketmine/color": "^0.3.0",
@@ -94,8 +94,8 @@
       "update-codegen": [
          "@php build/codegen/bedrockdata-path-consts.php",
          "@php build/codegen/biome-ids.php",
-         "@php build/codegen/block-serializer-consts.php vendor/nethergamesmc/bedrock-data/canonical_block_states.nbt",
-         "@php build/codegen/item-type-names.php vendor/nethergamesmc/bedrock-data/required_item_list.json",
+         "@php build/codegen/block-serializer-consts.php vendor/fenix/bedrock-data/canonical_block_states.nbt",
+         "@php build/codegen/item-type-names.php vendor/fenix/bedrock-data/required_item_list.json",
          "@php build/codegen/known-translation-apis.php",
          "@php build/codegen/pocketmine-yml-property-consts.php",
          "@php build/codegen/registry-interface.php src generated"
@@ -103,20 +103,24 @@
    },
    "repositories": [
       {
-         "type": "vcs",
-         "url":  "https://github.com/PocketMine-Fenix/BedrockProtocol-NG.git"
+         "type": "path",
+         "url":  "libs/bedrock-block-upgrade-schema",
+         "options": { "symlink": false }
       },
       {
-         "type": "vcs",
-         "url":  "https://github.com/PocketMine-Fenix/BedrockData-NG.git"
+         "type": "path",
+         "url":  "libs/bedrock-data",
+         "options": { "symlink": false }
       },
       {
-         "type": "vcs",
-         "url":  "https://github.com/axolotl-pm/BedrockItemUpgradeSchema.git"
+         "type": "path",
+         "url":  "libs/bedrock-item-upgrade-schema",
+         "options": { "symlink": false }
       },
       {
-         "type": "vcs",
-         "url":  "https://github.com/axolotl-pm/BedrockBlockUpgradeSchema.git"
+         "type": "path",
+         "url":  "libs/bedrock-protocol",
+         "options": { "symlink": false }
       }
    ]
 }

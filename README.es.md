@@ -70,13 +70,7 @@ Como PocketMine-MP, carece de muchas funciones vanilla (generación vanilla, red
 Si quieres survival vanilla puro, usa el [software oficial de Mojang](https://www.minecraft.net/download/server/bedrock). Lo que falta puede añadirse con plugins de [Poggit](https://poggit.pmmp.io/plugins).
 
 ## Créditos
-Este proyecto existe gracias a:
-
-- **[PocketMine-MP](https://github.com/pmmp/PocketMine-MP)** por el equipo pmmp — el software original y más de una década de desarrollo.
-- **[NetherGamesMC](https://github.com/NetherGamesMC)** — su implementación multiversión es la base de la capa multiversión que usamos.
-- **[kostamax27](https://github.com/kostamax27)** y la comunidad que mantiene las librerías de protocolo y datos actualizadas.
-- Todos los colaboradores históricos de ambos proyectos.
-
-PocketMine-Fenix es software libre bajo licencia **LGPL-3.0** (ver [LICENSE](/LICENSE)).
+PocketMine-Fenix se construye sobre el trabajo del equipo original de PocketMine-MP y la comunidad.
+Licenciado bajo **LGPL-3.0** (ver [LICENSE](/LICENSE)).
 
 No estamos afiliados con Mojang ni Microsoft. "Minecraft" es una marca de Mojang Synergies AB.

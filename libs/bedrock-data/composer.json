@@ -1,0 +1,10 @@
+{
+    "name":  "fenix/bedrock-data",
+    "description":  "Blobs of data generated from Minecraft: Bedrock Edition, used by PocketMine-MP",
+    "type":  "library",
+    "license":  "CC0-1.0",
+    "require":  {
+
+                },
+    "version":  "6.8.0"
+}

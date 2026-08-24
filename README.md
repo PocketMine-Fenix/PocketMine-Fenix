@@ -97,13 +97,7 @@ Documentation & plugin development: see the [PocketMine-MP docs](https://devdoc.
 See [BUILDING.md](/BUILDING.md). Maintainer documentation for adding new game versions: [UPDATING.md](/UPDATING.md).
 
 ## Credits
-This project stands on the shoulders of giants:
-
-- **[PocketMine-MP](https://github.com/pmmp/PocketMine-MP)** by the pmmp team — the original server software and more than a decade of development. Without them, none of this exists.
-- **[NetherGamesMC](https://github.com/NetherGamesMC)** — their multiversion implementation ([BedrockProtocol](https://github.com/NetherGamesMC/BedrockProtocol), [BedrockData](https://github.com/NetherGamesMC/BedrockData) and their PocketMine-MP fork) forms the foundation of the multiversion layer used here.
-- **[kostamax27](https://github.com/kostamax27)** and the community maintaining updated protocol & data libraries after those projects wound down.
-- All past contributors to both projects.
-
-PocketMine-Fenix is free open-source software licensed under **LGPL-3.0** (see [LICENSE](/LICENSE)), as were its predecessors.
+PocketMine-Fenix is built on the work of the original PocketMine-MP team and community contributors.
+Licensed under **LGPL-3.0** (see [LICENSE](/LICENSE)).
 
 We are not affiliated with Mojang or Microsoft. "Minecraft" is a trademark of Mojang Synergies AB. This software is not approved by or associated with Mojang.

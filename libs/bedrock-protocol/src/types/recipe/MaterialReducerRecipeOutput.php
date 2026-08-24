@@ -1,0 +1,42 @@
+<?php
+
+/*
+ * This file is part of BedrockProtocol.
+ * Copyright (C) 2014-2022 PocketMine Team <https://github.com/pmmp/BedrockProtocol>
+ *
+ * BedrockProtocol is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
+declare(strict_types=1);
+
+namespace pocketmine\network\mcpe\protocol\types\recipe;
+
+use pmmp\encoding\ByteBufferReader;
+use pmmp\encoding\ByteBufferWriter;
+use pmmp\encoding\VarInt;
+
+final class MaterialReducerRecipeOutput{
+	public function __construct(
+		private int $itemId,
+		private int $count
+	){}
+
+	public function getItemId() : int{ return $this->itemId; }
+
+	public function getCount() : int{ return $this->count; }
+
+	public static function decode(ByteBufferReader $in) : self{
+		$outputItemId = VarInt::readSignedInt($in);
+		$outputItemCount = VarInt::readSignedInt($in);
+
+		return new self($outputItemId, $outputItemCount);
+	}
+
+	public function encode(ByteBufferWriter $out) : void{
+		VarInt::writeSignedInt($out, $this->itemId);
+		VarInt::writeSignedInt($out, $this->count);
+	}
+}

@@ -1,0 +1,157 @@
+<?php
+
+/*
+ * This file is part of BedrockProtocol.
+ * Copyright (C) 2014-2022 PocketMine Team <https://github.com/pmmp/BedrockProtocol>
+ *
+ * BedrockProtocol is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ */
+
+declare(strict_types=1);
+
+namespace pocketmine\network\mcpe\protocol\types\biome\chunkgen;
+
+use pmmp\encoding\Byte;
+use pmmp\encoding\ByteBufferReader;
+use pmmp\encoding\ByteBufferWriter;
+use pmmp\encoding\VarInt;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\network\mcpe\protocol\serializer\CommonTypes;
+use function count;
+
+final class BiomeDefinitionChunkGenData{
+
+	/**
+	 * @param BiomeReplacementData[] $replacementsData
+	 */
+	public function __construct(
+		private ?BiomeClimateData $climate,
+		private ?BiomeConsolidatedFeaturesData $consolidatedFeatures,
+		private ?BiomeMountainParamsData $mountainParams,
+		private ?BiomeSurfaceMaterialAdjustmentData $surfaceMaterialAdjustment,
+		private ?BiomeOverworldGenRulesData $overworldGenRules,
+		private ?BiomeMultinoiseGenRulesData $multinoiseGenRules,
+		private ?BiomeLegacyWorldGenRulesData $legacyWorldGenRules,
+		private ?array $replacementsData,
+		private ?int $villageType,
+		private ?BiomeSurfaceBuilderData $surfaceBuilderData,
+		private ?BiomeSurfaceBuilderData $subSurfaceBuilderData
+	){}
+
+	public function getClimate() : ?BiomeClimateData{ return $this->climate; }
+
+	public function getConsolidatedFeatures() : ?BiomeConsolidatedFeaturesData{ return $this->consolidatedFeatures; }
+
+	public function getMountainParams() : ?BiomeMountainParamsData{ return $this->mountainParams; }
+
+	public function getSurfaceMaterialAdjustment() : ?BiomeSurfaceMaterialAdjustmentData{ return $this->surfaceMaterialAdjustment; }
+
+	public function getOverworldGenRules() : ?BiomeOverworldGenRulesData{ return $this->overworldGenRules; }
+
+	public function getMultinoiseGenRules() : ?BiomeMultinoiseGenRulesData{ return $this->multinoiseGenRules; }
+
+	public function getLegacyWorldGenRules() : ?BiomeLegacyWorldGenRulesData{ return $this->legacyWorldGenRules; }
+
+	/**
+	 * @return BiomeReplacementData[]
+	 */
+	public function getReplacementsData() : ?array{ return $this->replacementsData; }
+
+	public function getVillageType() : ?int{ return $this->villageType; }
+
+	public function getSurfaceBuilderData() : ?BiomeSurfaceBuilderData{ return $this->surfaceBuilderData; }
+
+	public function getSubSurfaceBuilderData() : ?BiomeSurfaceBuilderData{ return $this->subSurfaceBuilderData; }
+
+	public static function read(ByteBufferReader $in, int $protocolId) : self{
+		$climate = CommonTypes::readOptional($in, fn() => BiomeClimateData::read($in, $protocolId));
+		$consolidatedFeatures = CommonTypes::readOptional($in, fn() => BiomeConsolidatedFeaturesData::read($in));
+		$mountainParams = CommonTypes::readOptional($in, fn() => BiomeMountainParamsData::read($in));
+		$surfaceMaterialAdjustment = CommonTypes::readOptional($in, fn() => BiomeSurfaceMaterialAdjustmentData::read($in));
+		if($protocolId <= ProtocolInfo::PROTOCOL_1_26_10){
+			$surfaceMaterial = CommonTypes::readOptional($in, fn() => BiomeSurfaceMaterialData::read($in));
+			$defaultOverworldSurface = CommonTypes::getBool($in);
+			$swampSurface = CommonTypes::getBool($in);
+			$frozenOceanSurface = CommonTypes::getBool($in);
+			$theEndSurface = CommonTypes::getBool($in);
+			$mesaSurface = CommonTypes::readOptional($in, fn() => BiomeMesaSurfaceData::read($in));
+			$cappedSurface = CommonTypes::readOptional($in, fn() => BiomeCappedSurfaceData::read($in));
+			$surfaceBuilderData = new BiomeSurfaceBuilderData($surfaceMaterial, $defaultOverworldSurface, $swampSurface, $frozenOceanSurface, $theEndSurface, $mesaSurface, $cappedSurface, null);
+		}
+		$overworldGenRules = CommonTypes::readOptional($in, fn() => BiomeOverworldGenRulesData::read($in));
+		$multinoiseGenRules = CommonTypes::readOptional($in, fn() => BiomeMultinoiseGenRulesData::read($in));
+		$legacyWorldGenRules = CommonTypes::readOptional($in, fn() => BiomeLegacyWorldGenRulesData::read($in));
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_21_120){
+			$replacementsData = CommonTypes::readOptional($in, function(ByteBufferReader $in) : array{
+				$count = VarInt::readUnsignedInt($in);
+				$result = [];
+				for($i = 0; $i < $count; ++$i){
+					$result[] = BiomeReplacementData::read($in);
+				}
+				return $result;
+			});
+
+			if($protocolId >= ProtocolInfo::PROTOCOL_1_26_0){
+				$villageType = CommonTypes::readOptional($in, fn() => Byte::readUnsigned($in));
+
+				if($protocolId >= ProtocolInfo::PROTOCOL_1_26_20){
+					$surfaceBuilderData = CommonTypes::readOptional($in, fn() => BiomeSurfaceBuilderData::read($in, $protocolId));
+					$subSurfaceBuilderData = CommonTypes::readOptional($in, fn() => BiomeSurfaceBuilderData::read($in, $protocolId));
+				}
+			}
+		}
+
+		return new self(
+			$climate,
+			$consolidatedFeatures,
+			$mountainParams,
+			$surfaceMaterialAdjustment,
+			$overworldGenRules,
+			$multinoiseGenRules,
+			$legacyWorldGenRules,
+			$replacementsData ?? null,
+			$villageType ?? null,
+			$surfaceBuilderData ?? null,
+			$subSurfaceBuilderData ?? null
+		);
+	}
+
+	public function write(ByteBufferWriter $out, int $protocolId) : void{
+		CommonTypes::writeOptional($out, $this->climate, fn(ByteBufferWriter $out, BiomeClimateData $v) => $v->write($out, $protocolId));
+		CommonTypes::writeOptional($out, $this->consolidatedFeatures, fn(ByteBufferWriter $out, BiomeConsolidatedFeaturesData $v) => $v->write($out));
+		CommonTypes::writeOptional($out, $this->mountainParams, fn(ByteBufferWriter $out, BiomeMountainParamsData $v) => $v->write($out));
+		CommonTypes::writeOptional($out, $this->surfaceMaterialAdjustment, fn(ByteBufferWriter $out, BiomeSurfaceMaterialAdjustmentData $v) => $v->write($out));
+		if($protocolId <= ProtocolInfo::PROTOCOL_1_26_10){
+			CommonTypes::writeOptional($out, $this->surfaceBuilderData?->getSurfaceMaterial(), fn(ByteBufferWriter $out, BiomeSurfaceMaterialData $v) => $v->write($out));
+			CommonTypes::putBool($out, $this->surfaceBuilderData?->hasDefaultOverworldSurface() ?? false);
+			CommonTypes::putBool($out, $this->surfaceBuilderData?->hasSwampSurface() ?? false);
+			CommonTypes::putBool($out, $this->surfaceBuilderData?->hasFrozenOceanSurface() ?? false);
+			CommonTypes::putBool($out, $this->surfaceBuilderData?->hasTheEndSurface() ?? false);
+			CommonTypes::writeOptional($out, $this->surfaceBuilderData?->getMesaSurface(), fn(ByteBufferWriter $out, BiomeMesaSurfaceData $v) => $v->write($out));
+			CommonTypes::writeOptional($out, $this->surfaceBuilderData?->getCappedSurface(), fn(ByteBufferWriter $out, BiomeCappedSurfaceData $v) => $v->write($out));
+		}
+		CommonTypes::writeOptional($out, $this->overworldGenRules, fn(ByteBufferWriter $out, BiomeOverworldGenRulesData $v) => $v->write($out));
+		CommonTypes::writeOptional($out, $this->multinoiseGenRules, fn(ByteBufferWriter $out, BiomeMultinoiseGenRulesData $v) => $v->write($out));
+		CommonTypes::writeOptional($out, $this->legacyWorldGenRules, fn(ByteBufferWriter $out, BiomeLegacyWorldGenRulesData $v) => $v->write($out));
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_21_120){
+			CommonTypes::writeOptional($out, $this->replacementsData, function(ByteBufferWriter $out, array $v) : void{
+				VarInt::writeUnsignedInt($out, count($v));
+				foreach($v as $item){
+					$item->write($out);
+				}
+			});
+
+			if($protocolId >= ProtocolInfo::PROTOCOL_1_26_0){
+				CommonTypes::writeOptional($out, $this->villageType, fn(ByteBufferWriter $out, int $v) => Byte::writeUnsigned($out, $v));
+
+				if($protocolId >= ProtocolInfo::PROTOCOL_1_26_20){
+					CommonTypes::writeOptional($out, $this->surfaceBuilderData, fn(ByteBufferWriter $out, BiomeSurfaceBuilderData $v) => $v->write($out, $protocolId));
+					CommonTypes::writeOptional($out, $this->subSurfaceBuilderData, fn(ByteBufferWriter $out, BiomeSurfaceBuilderData $v) => $v->write($out, $protocolId));
+				}
+			}
+		}
+	}
+}
