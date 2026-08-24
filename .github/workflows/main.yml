@@ -49,6 +49,11 @@ jobs:
 
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          ignore_paths: >-
+            build/php
+            libs
+            tests/plugins/DevTools
 
   translations:
     name: Translation checks
