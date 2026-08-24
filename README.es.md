@@ -69,6 +69,15 @@ Ambos. Descarga <code>PocketMine-Fenix.phar</code> de las [Releases](https://git
 Como PocketMine-MP, carece de muchas funciones vanilla (generación vanilla, redstone, IA de mobs...).
 Si quieres survival vanilla puro, usa el [software oficial de Mojang](https://www.minecraft.net/download/server/bedrock). Lo que falta puede añadirse con plugins de [Poggit](https://poggit.pmmp.io/plugins).
 
+## Documentación
+
+| Documento | Propósito |
+|-----------|-----------|
+| [UPDATING.md](/UPDATING.md) | Cómo actualizar; cómo se agrega cada nueva versión del juego |
+| [TESTING.md](/TESTING.md) | Lista de pruebas manuales tras actualizar |
+| [BUILDING.md](/BUILDING.md) | Compilar desde el código fuente |
+| [CONTRIBUTING.md](/CONTRIBUTING.md) | Estilo de código, ramas y PRs |
+
 ## Créditos
 PocketMine-Fenix se construye sobre el trabajo del equipo original de PocketMine-MP y la comunidad.
 Licenciado bajo **LGPL-3.0** (ver [LICENSE](/LICENSE)).

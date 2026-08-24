@@ -96,6 +96,15 @@ Plugin development: plugins using the PocketMine-MP 5.x API work as-is — find 
 ## Building from source
 See [BUILDING.md](/BUILDING.md). Maintainer documentation for adding new game versions: [UPDATING.md](/UPDATING.md).
 
+## Documentation index
+
+| Document | Purpose |
+|----------|---------|
+| [UPDATING.md](/UPDATING.md) | How to update (owners), how new game versions are added (developers/AI) |
+| [TESTING.md](/TESTING.md) | Manual test checklist after updating |
+| [BUILDING.md](/BUILDING.md) | Compile from source |
+| [CONTRIBUTING.md](/CONTRIBUTING.md) | Code style, branches and PR guidelines |
+
 ## Credits
 PocketMine-Fenix is built on the work of the original PocketMine-MP team and community contributors.
 Licensed under **LGPL-3.0** (see [LICENSE](/LICENSE)).
