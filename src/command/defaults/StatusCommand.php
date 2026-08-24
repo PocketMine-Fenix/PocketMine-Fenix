@@ -26,15 +26,22 @@ namespace pocketmine\command\defaults;
 use pocketmine\command\CommandSender;
 use pocketmine\lang\KnownTranslationFactory as l10n;
 use pocketmine\lang\Translatable;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\utils\Process;
 use pocketmine\utils\TextFormat;
+use pocketmine\utils\Utils;
 use function count;
 use function floor;
+use function implode;
+use function is_string;
+use function ksort;
 use function microtime;
+use function min;
 use function number_format;
 use function round;
 use function strval;
+use const SORT_NATURAL;
 
 class StatusCommand extends VanillaCommand{
 
@@ -128,6 +135,24 @@ class StatusCommand extends VanillaCommand{
 				l10n::pocketmine_command_status_world_timeStat(strval(round($world->getTickRateTime(), 2)))->prefix($timeColor)
 			));
 		}
+
+		$clientVersions = [];
+		foreach($server->getOnlinePlayers() as $onlinePlayer){
+			$extraData = $onlinePlayer->getNetworkSession()->getPlayerInfo()?->getExtraData();
+			$gameVersion = isset($extraData["GameVersion"]) && is_string($extraData["GameVersion"]) ? $extraData["GameVersion"] : "unknown";
+			$clientVersions[$gameVersion] = ($clientVersions[$gameVersion] ?? 0) + 1;
+		}
+		if(count($clientVersions) > 0){
+			ksort($clientVersions, SORT_NATURAL);
+			$parts = [];
+			foreach(Utils::stringifyKeys($clientVersions) as $clientVersion => $count){
+				$parts[] = TextFormat::AQUA . $clientVersion . TextFormat::RESET . " x" . $count;
+			}
+			$sender->sendMessage(TextFormat::GOLD . "Client versions: " . TextFormat::RESET . implode(", ", $parts));
+		}
+		$sender->sendMessage(TextFormat::GOLD . "Supported protocols: " . TextFormat::RESET .
+			min(ProtocolInfo::ACCEPTED_PROTOCOL) . " - " . ProtocolInfo::CURRENT_PROTOCOL .
+			" (" . count(ProtocolInfo::ACCEPTED_PROTOCOL) . " versions)");
 
 		return true;
 	}

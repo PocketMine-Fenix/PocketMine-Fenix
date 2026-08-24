@@ -49,6 +49,7 @@ final class YmlServerProperties{
 	public const AUTO_UPDATER = 'auto-updater';
 	public const AUTO_UPDATER_ENABLED = 'auto-updater.enabled';
 	public const AUTO_UPDATER_HOST = 'auto-updater.host';
+	public const AUTO_UPDATER_NOTIFY_OPS_ON_JOIN = 'auto-updater.notify-ops-on-join';
 	public const AUTO_UPDATER_ON_UPDATE = 'auto-updater.on-update';
 	public const AUTO_UPDATER_ON_UPDATE_WARN_CONSOLE = 'auto-updater.on-update.warn-console';
 	public const AUTO_UPDATER_PREFERRED_CHANNEL = 'auto-updater.preferred-channel';
@@ -92,6 +93,7 @@ final class YmlServerProperties{
 	public const NETWORK_COMPRESSION_LEVEL = 'network.compression-level';
 	public const NETWORK_ENABLE_ENCRYPTION = 'network.enable-encryption';
 	public const NETWORK_MAX_MTU_SIZE = 'network.max-mtu-size';
+	public const NETWORK_QUERY_MULTIVERSION_TAG = 'network.query-multiversion-tag';
 	public const NETWORK_UPNP_FORWARDING = 'network.upnp-forwarding';
 	public const PLAYER = 'player';
 	public const PLAYER_SAVE_PLAYER_DATA = 'player.save-player-data';

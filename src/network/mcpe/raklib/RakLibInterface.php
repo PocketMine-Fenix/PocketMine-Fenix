@@ -52,6 +52,7 @@ use raklib\server\ServerEventListener;
 use raklib\utils\InternetAddress;
 use function addcslashes;
 use function base64_encode;
+use function count;
 use function implode;
 use function mt_rand;
 use function rtrim;
@@ -262,6 +263,13 @@ class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 
 	public function setName(string $name) : void{
 		$info = $this->server->getQueryInformation();
+
+		if(
+			count(ProtocolInfo::ACCEPTED_PROTOCOL) > 1 &&
+			$this->server->getConfigGroup()->getPropertyBool(YmlServerProperties::NETWORK_QUERY_MULTIVERSION_TAG, true)
+		){
+			$name .= " [MV]";
+		}
 
 		$this->interface->setName(implode(";",
 			[

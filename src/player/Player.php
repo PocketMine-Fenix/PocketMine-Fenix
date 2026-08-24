@@ -131,6 +131,7 @@ use pocketmine\ServerProperties;
 use pocketmine\timings\Timings;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\TextFormat;
+use pocketmine\VersionInfo;
 use pocketmine\world\ChunkListener;
 use pocketmine\world\ChunkListenerNoOpTrait;
 use pocketmine\world\ChunkLoader;
@@ -965,6 +966,16 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		$gameVersion = isset($extraData["GameVersion"]) && is_string($extraData["GameVersion"]) ? $extraData["GameVersion"] : "unknown";
 		$deviceOs = isset($extraData["DeviceOS"]) && is_int($extraData["DeviceOS"]) ? self::deviceOsToString($extraData["DeviceOS"]) : "Unknown";
 		$this->logger->info("Connected with Minecraft $gameVersion (protocol " . $session->getProtocolId() . ") on $deviceOs");
+
+		if(
+			$this->hasPermission(DefaultPermissionNames::COMMAND_UPDATEPM) &&
+			$this->server->getConfigGroup()->getPropertyBool(YmlServerProperties::AUTO_UPDATER_NOTIFY_OPS_ON_JOIN, true)
+		){
+			$updateInfo = $this->server->getUpdater()->getUpdateInfo();
+			if($updateInfo !== null){
+				$this->sendMessage(TextFormat::GOLD . VersionInfo::NAME . " " . TextFormat::AQUA . $updateInfo->base_version . TextFormat::GOLD . " is available! Use " . TextFormat::AQUA . "/updatepm" . TextFormat::GOLD . " to update, then restart the server.");
+			}
+		}
 
 		$this->noDamageTicks = 60;
 
