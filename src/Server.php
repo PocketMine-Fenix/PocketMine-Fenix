@@ -1049,6 +1049,7 @@ class Server{
 			);
 
 			EncryptionContext::$ENABLED = $this->configGroup->getPropertyBool(Yml::NETWORK_ENABLE_ENCRYPTION, true);
+			$this->getAcceptedProtocols(); //eagerly validate and log the configured accepted client protocols
 
 			$this->doTitleTick = $this->configGroup->getPropertyBool(Yml::CONSOLE_TITLE_TICK, true) && Terminal::hasFormattingCodes();
 
