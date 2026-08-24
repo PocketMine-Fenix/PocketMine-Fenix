@@ -20,6 +20,9 @@ on:
 env:
   PHP_VERSION: "8.2"
 
+permissions:
+  contents: write #needed to create draft releases
+
 jobs:
   skip:
     name: Check whether to ignore this tag
