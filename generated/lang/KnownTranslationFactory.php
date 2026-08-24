@@ -2509,6 +2509,10 @@ final class KnownTranslationFactory{
 		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_COMMAND_UNBAN_PLAYER, []);
 	}
 
+	public static function pocketmine_permission_command_updatepm() : Translatable{
+		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_COMMAND_UPDATEPM, []);
+	}
+
 	public static function pocketmine_permission_command_version() : Translatable{
 		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_COMMAND_VERSION, []);
 	}

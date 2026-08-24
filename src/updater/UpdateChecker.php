@@ -6,7 +6,7 @@
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___/     |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -135,10 +135,7 @@ class UpdateChecker{
 	 */
 	public function doCheck() : void{
 		$this->logger->debug("Checking for updates from GitHub Releases");
-		$this->server->getAsyncPool()->submitTask(new UpdateCheckTask(
-			$this,
-			UpdateCheckTask::apiUrlFromGithubUrl(VersionInfo::GITHUB_URL)
-		));
+		$this->server->getAsyncPool()->submitTask(new UpdateCheckTask($this));
 	}
 
 	/**

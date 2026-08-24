@@ -31,13 +31,21 @@ Protocol → game version mapping: https://minecraft.wiki/w/Protocol_version
 
 ### A new Minecraft version just came out. What do I do?
 
-Usually **nothing right away**:
+**Option 1 — automatic (recommended):** type this in the server console or as an OP in-game:
 
-1. Wait for a new **Release** here on GitHub
-   ([watch releases](https://github.com/PocketMine-Fenix/PocketMine-Fenix/releases) with the *Watch → Custom → Releases* button).
-2. Download `PocketMine-Fenix.phar` from the latest release.
-3. Stop your server, replace the old `.phar` file with the new one.
-4. Start the server. Done — old and new clients can both join.
+```
+updatepm
+```
+
+It checks GitHub for the newest release, downloads it and swaps it into place.
+Then **restart the server** to apply. You can also let the server warn you
+automatically (`auto-updater.enabled` in `pocketmine.yml`, on by default).
+
+**Option 2 — manual:**
+
+1. Download `PocketMine-Fenix.phar` from the latest release.
+2. Stop your server, replace the old `.phar` file with the new one.
+3. Start the server. Done — old and new clients can both join.
 
 **Do not delete** your `worlds/`, `players/`, `plugins/` or `pocketmine.yml` folders when updating.
 

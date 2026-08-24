@@ -119,6 +119,7 @@ abstract class DefaultPermissions{
 			Names::COMMAND_TIMINGS,
 			Names::COMMAND_TITLE_OTHER,
 			Names::COMMAND_TITLE_SELF,
+			Names::COMMAND_UPDATEPM,
 			Names::COMMAND_TRANSFERSERVER,
 			Names::COMMAND_UNBAN_IP,
 			Names::COMMAND_UNBAN_PLAYER,

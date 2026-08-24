@@ -115,6 +115,7 @@ use pocketmine\network\mcpe\protocol\AnimatePacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\SetActorMotionPacket;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
+use pocketmine\network\mcpe\protocol\types\DeviceOS;
 use pocketmine\network\mcpe\protocol\types\DimensionIds;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataCollection;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
@@ -153,6 +154,8 @@ use function count;
 use function explode;
 use function floor;
 use function get_class;
+use function is_int;
+use function is_string;
 use function max;
 use function mb_strlen;
 use function microtime;
@@ -937,8 +940,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	 * Called by the network system when the pre-spawn sequence is completed (e.g. after sending spawn chunks).
 	 * This fires join events and broadcasts join messages to other online players.
 	 */
-	public function doFirstSpawn() : void{
-		if($this->spawned){
+	public function doFirstSpawn() : void{		if($this->spawned){
 			return;
 		}
 		$this->spawned = true;
@@ -957,6 +959,13 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			$this->server->broadcastMessage($ev->getJoinMessage());
 		}
 
+		$session = $this->getNetworkSession();
+		$info = $session->getPlayerInfo();
+		$extraData = $info?->getExtraData() ?? [];
+		$gameVersion = isset($extraData["GameVersion"]) && is_string($extraData["GameVersion"]) ? $extraData["GameVersion"] : "unknown";
+		$deviceOs = isset($extraData["DeviceOS"]) && is_int($extraData["DeviceOS"]) ? self::deviceOsToString($extraData["DeviceOS"]) : "Unknown";
+		$this->logger->info("Connected with Minecraft $gameVersion (protocol " . $session->getProtocolId() . ") on $deviceOs");
+
 		$this->noDamageTicks = 60;
 
 		$this->spawnToAll();
@@ -965,6 +974,27 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			$this->logger->debug("Quit while dead, forcing respawn");
 			$this->actuallyRespawn();
 		}
+	}
+
+	private static function deviceOsToString(int $deviceOs) : string{
+		return match($deviceOs){
+			DeviceOS::ANDROID => "Android",
+			DeviceOS::IOS => "iOS",
+			DeviceOS::OSX => "macOS",
+			DeviceOS::AMAZON => "Amazon",
+			DeviceOS::GEAR_VR => "Gear VR",
+			DeviceOS::HOLOLENS => "HoloLens",
+			DeviceOS::WINDOWS_10 => "Windows (UWP)",
+			DeviceOS::WIN32 => "Windows (x86)",
+			DeviceOS::DEDICATED => "Dedicated server",
+			DeviceOS::TVOS => "tvOS",
+			DeviceOS::PLAYSTATION => "PlayStation",
+			DeviceOS::NINTENDO => "Nintendo",
+			DeviceOS::XBOX => "Xbox",
+			DeviceOS::WINDOWS_PHONE => "Windows Phone",
+			DeviceOS::LINUX => "Linux",
+			default => "Unknown device ($deviceOs)",
+		};
 	}
 
 	/**
