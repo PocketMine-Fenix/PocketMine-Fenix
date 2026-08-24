@@ -1,4 +1,4 @@
-﻿[CmdletBinding(PositionalBinding=$false)]
+[CmdletBinding(PositionalBinding=$false)]
 param (
 	[string]$php = "",
 	[switch]$Loop = $false,
@@ -15,7 +15,7 @@ if($php -ne ""){
 	$binary = "php"
 }else{
 	echo "Couldn't find a PHP binary in system PATH or $pwd\bin\php"
-	echo "Please refer to the installation instructions at https://doc.pmmp.io/en/rtfd/installation.html"
+	echo "Please refer to the installation instructions at https://github.com/PocketMine-Fenix/PocketMine-Fenix#readme"
 	pause
 	exit 1
 }

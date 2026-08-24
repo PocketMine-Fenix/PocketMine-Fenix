@@ -16,11 +16,8 @@ jobs:
             Hi, we only accept **bug reports** on this issue tracker, but this issue looks like a support request.
 
 
-            Instead of creating an issue, try the following:
-
-            - Check our [Documentation](https://doc.pmmp.io) to see if you can find answers there
-
-            - Ask the community on our [Discord server](https://discord.gg/bmSAZBG)
+            Instead of creating an issue, please check the [README](https://github.com/PocketMine-Fenix/PocketMine-Fenix#readme)
+            and the discussions section of the repository for help.
 
           close-issue: true
           lock-issue: false

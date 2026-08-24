@@ -1,33 +1,45 @@
-# Building
-## Pre-requisites
-- A bash shell (git bash is sufficient for Windows)
-- [`git`](https://git-scm.com) available in your shell
-- PHP 8.2 or newer available in your shell
-- [`composer`](https://getcomposer.org) available in your shell
+# Building PocketMine-Fenix from source
 
-## Custom PHP binaries
-Because PocketMine-MP requires several non-standard PHP extensions and configuration, PMMP provides scripts to build custom binaries for running PocketMine-MP, as well as prebuilt binaries.
+## Requirements
 
-- [Prebuilt binaries](https://github.com/pmmp/PHP-Binaries/releases)
-- [Compile scripts](https://github.com/pmmp/php-build-scripts) are provided as a submodule in the path `build/php`
+- PHP 8.1 or newer (64-bit CLI), with several non-standard extensions required by
+  the server. The full list is in [`composer.json`](/composer.json) under `require`
+  (entries starting with `ext-`).
+- [Composer](https://getcomposer.org/)
 
-If you use a custom binary, you'll need to replace `composer` usages in this guide with `path/to/your/php path/to/your/composer.phar`.
+You can use any PHP build that includes the required extensions, including the
+community prebuilt PHP binaries commonly used for PocketMine-style servers.
 
-## Setting up environment
-1. `git clone https://github.com/pmmp/PocketMine-MP.git`
-2. `composer install`
+## Cloning the repository
 
-## Checking out a different branch to build
-1. `git checkout <branch to checkout>`
-2. Re-run `composer install` to synchronize dependencies.
+```
+git clone https://github.com/PocketMine-Fenix/PocketMine-Fenix.git
+cd PocketMine-Fenix
+```
 
-## Optimizing for release builds
-1. Add the flags `--no-dev --classmap-authoritative` to your `composer install` command. This will reduce build size and improve autoloading speed.
+No extra repositories or submodules are needed — protocol/data libraries are
+included in this repository under `libs/`.
 
-## Building `PocketMine-MP.phar`
-Run `composer make-server` using your preferred PHP binary. It'll drop a `PocketMine-MP.phar` into the current working directory.
+## Building `PocketMine-Fenix.phar`
 
-You can also use the `--out` option to change the output filename.
+Run:
 
-## Running PocketMine-MP from source code
-Run `src/PocketMine.php` using your preferred PHP binary.
+```
+composer make-server
+```
+
+This installs dependencies and drops a `PocketMine-Fenix.phar` into the current
+working directory.
+
+## Running from source code
+
+Instead of building a phar, you can run directly from a source checkout:
+
+```
+composer install --no-dev --classmap-authoritative
+php src/PocketMine.php
+```
+
+## Verifying a build
+
+See [UPDATING.md](/UPDATING.md) section 4 for a quick local boot test.

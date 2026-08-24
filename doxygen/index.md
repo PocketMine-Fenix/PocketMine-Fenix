@@ -1,10 +1,7 @@
-## PocketMine-MP API Documentation
+## PocketMine-Fenix API Documentation
 
-This site contains auto-generated API documentation for PocketMine-MP (and dependencies which are not outsourced). Documentation here is regenerated for every release.
-
-This site can be accessed via https://apidoc.pmmp.io.
+This site contains auto-generated API documentation for PocketMine-Fenix.
+Documentation is regenerated for every release.
 
 ### Additional developer resources
- - [DevTools](https://github.com/pmmp/DevTools/) - Development tools plugin for creating plugins
- - [ExamplePlugin](https://github.com/pmmp/ExamplePlugin/) - Example plugin demonstrating some basic API features
- - [DeveloperDocs](https://devdoc.pmmp.io) - General documentation for PocketMine-MP plugin developers
+ - [Poggit](https://poggit.pmmp.io/plugins) - plugin repository, compatible with the PocketMine-MP 5.x plugin API
