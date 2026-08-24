@@ -18,7 +18,7 @@ DATA_DIR="$(pwd)/test_data"
 PLUGINS_DIR="$DATA_DIR/plugins"
 
 rm -rf "$DATA_DIR"
-rm PocketMine-MP.phar 2> /dev/null
+rm PocketMine-Fenix.phar 2> /dev/null
 mkdir "$DATA_DIR"
 mkdir "$PLUGINS_DIR"
 
@@ -27,7 +27,7 @@ php -dphar.readonly=0 ./src/ConsoleScript.php --make ./ --relative ./ --out "$PL
 cd ../../..
 composer make-server
 
-if [ -f PocketMine-MP.phar ]; then
+if [ -f PocketMine-Fenix.phar ]; then
 	echo Server phar created successfully.
 else
 	echo Server phar was not created!
@@ -37,7 +37,7 @@ fi
 cp -r tests/plugins/TesterPlugin "$PLUGINS_DIR"
 cp tests/plugins/TestScriptPlugin.php "$PLUGINS_DIR"
 
-echo -e "stop\n" | php PocketMine-MP.phar \
+echo -e "stop\n" | php PocketMine-Fenix.phar \
   --no-wizard \
   --disable-ansi \
   --disable-readline \
