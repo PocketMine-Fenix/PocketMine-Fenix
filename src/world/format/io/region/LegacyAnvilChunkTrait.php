@@ -44,11 +44,8 @@ use function zlib_decode;
 /**
  * Trait containing I/O methods for handling legacy Anvil-style chunks.
  *
- * Motivation: In the future PMAnvil will become a legacy read-only format, but Anvil will continue to exist for the sake
- * of handling worlds in the PC 1.13 format. Thus, we don't want PMAnvil getting accidentally influenced by changes
- * happening to the underlying Anvil, because it only uses the legacy part.
- *
- * @internal
+ * Modern (Minecraft 1.18+) chunks are detected and routed to
+ * deserializeModernJavaChunk(), which providers that support them implement.
  */
 trait LegacyAnvilChunkTrait{
 	/**
@@ -61,14 +58,22 @@ trait LegacyAnvilChunkTrait{
 		}
 		$nbt = new BigEndianNbtSerializer();
 		try{
-			$chunk = $nbt->read($decompressed)->mustGetCompoundTag();
+			$root = $nbt->read($decompressed)->mustGetCompoundTag();
 		}catch(NbtDataException $e){
 			throw new CorruptedChunkException($e->getMessage(), 0, $e);
 		}
-		$chunk = $chunk->getTag("Level");
-		if(!($chunk instanceof CompoundTag)){
+
+		//1.18+ keeps fields at root level with a "sections" list; older versions wrap them in "Level"
+		if($root->getListTag("sections", CompoundTag::class) !== null){
+			//modern post-flattening chunk (Minecraft 1.18+) - delegate to the modern reader
+			return $this->deserializeModernJavaChunk($data, $logger);
+		}
+
+		$levelTag = $root->getTag("Level");
+		if(!$levelTag instanceof CompoundTag){
 			throw new CorruptedChunkException("'Level' key is missing from chunk NBT");
 		}
+		$chunk = $levelTag;
 
 		$makeBiomeArray = function(string $biomeIds) : PalettedBlockArray{
 			if(strlen($biomeIds) !== 256){
@@ -111,5 +116,11 @@ trait LegacyAnvilChunkTrait{
 	}
 
 	abstract protected function deserializeSubChunk(CompoundTag $subChunk, PalettedBlockArray $biomes3d, \Logger $logger) : SubChunk;
+
+	/**
+	 * Called when a modern (Minecraft 1.18+) chunk is detected. Providers that
+	 * do not implement modern reading should throw CorruptedChunkException.
+	 */
+	abstract protected function deserializeModernJavaChunk(string $data, \Logger $logger) : ?LoadedChunkData;
 
 }

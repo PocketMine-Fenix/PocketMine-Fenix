@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\world\format\io\data;
 
+use pocketmine\math\Vector3;
 use pocketmine\nbt\BigEndianNbtSerializer;
 use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\tag\CompoundTag;
@@ -64,12 +65,25 @@ class JavaWorldData extends BaseNbtWorldData{
 	private const TAG_DATA_VERSION = "DataVersion";
 
 	/**
-	 * Highest Java Edition data version whose chunk format we can read.
-	 * 1343 = Minecraft Java 1.12.2, the last pre-flattening release. Worlds from
-	 * 1.13 onwards use paletted block states which are not compatible with the
-	 * legacy Anvil reader.
+	 * Java Edition data versions below this value use the legacy pre-flattening
+	 * chunk format (Blocks/Data byte arrays) which is fully supported.
 	 */
-	public const MAX_SUPPORTED_DATA_VERSION = 1343;
+	public const MIN_MODERN_DATA_VERSION = 1451; //Minecraft 1.13 - the flattening
+
+	/**
+	 * Java Edition data versions from this value onwards use paletted sections
+	 * with world height -64..319 (Minecraft 1.18), which the modern reader handles.
+	 */
+	public const MIN_PALETTE_COMPOUND_DATA_VERSION = 2724; //Minecraft 1.18
+
+	/**
+	 * Data versions in this range use paletted sections but with string-only
+	 * palettes and/or different biome encoding that the modern reader does not
+	 * support yet.
+	 */
+	public const MAX_UNSUPPORTED_DATA_VERSION = self::MIN_PALETTE_COMPOUND_DATA_VERSION - 1;
+
+	private int $dataVersion = 0;
 
 	public static function generate(string $path, string $name, WorldCreationOptions $options, int $version = 19133) : void{
 		//TODO, add extra details
@@ -121,16 +135,59 @@ class JavaWorldData extends BaseNbtWorldData{
 			throw new CorruptedWorldException("Missing '" . self::TAG_ROOT_DATA . "' key or wrong type");
 		}
 
-		$dataVersion = $dataTag->getInt(self::TAG_DATA_VERSION, 0);
-		if($dataVersion > self::MAX_SUPPORTED_DATA_VERSION){
+		$this->dataVersion = $dataTag->getInt(self::TAG_DATA_VERSION, 0);
+		if(
+			$this->dataVersion >= self::MIN_MODERN_DATA_VERSION &&
+			$this->dataVersion <= self::MAX_UNSUPPORTED_DATA_VERSION
+		){
 			throw new UnsupportedWorldFormatException(
-				"This Java Edition world uses data version $dataVersion (Minecraft 1.13+). " .
-				"Only pre-flattening worlds (data version <= " . self::MAX_SUPPORTED_DATA_VERSION . ", Minecraft <= 1.12.2) can be imported. " .
+				"This Java Edition world uses data version {$this->dataVersion} (Minecraft 1.13 - 1.17), whose " .
+				"paletted chunk format is not supported yet (only pre-1.13 legacy worlds and 1.18+ worlds can be imported). " .
 				"Please convert the world with an external tool such as Amulet or Chunker first."
 			);
 		}
 
 		return $dataTag;
+	}
+
+	public function getDataVersion() : int{
+		return $this->dataVersion;
+	}
+
+	/**
+	 * Java 1.18+ moved RandomSeed and spawn position into WorldGenSettings.
+	 * This method returns the legacy "Data" root for backwards compatibility,
+	 * or the WorldGenSettings compound when the legacy tags are absent.
+	 */
+	private function getSeedSource() : CompoundTag{
+		$genSettings = $this->compoundTag->getCompoundTag('WorldGenSettings');
+		if($genSettings !== null && $genSettings->getTag('seed') !== null){
+			return $genSettings;
+		}
+		return $this->compoundTag;
+	}
+
+	public function getSeed() : int{
+		$source = $this->getSeedSource();
+		if($source->getTag('seed') !== null){
+			return is_int($seed = $source->getValue()['seed'] ?? null) ? $seed : $source->getLong('seed', 0);
+		}
+		return $source->getLong('RandomSeed', 0);
+	}
+
+	public function getSpawn() : Vector3{
+		$genSettings = $this->compoundTag->getCompoundTag('WorldGenSettings');
+		if($genSettings !== null && $genSettings->getTag('spawn') !== null){
+			$spawn = $genSettings->getCompoundTag('spawn');
+			if($spawn !== null){
+				return new Vector3($spawn->getInt('X'), $spawn->getInt('Y'), $spawn->getInt('Z'));
+			}
+		}
+		return new Vector3(
+			$this->compoundTag->getInt(self::TAG_SPAWN_X),
+			$this->compoundTag->getInt(self::TAG_SPAWN_Y),
+			$this->compoundTag->getInt(self::TAG_SPAWN_Z)
+		);
 	}
 
 	protected function fix() : void{

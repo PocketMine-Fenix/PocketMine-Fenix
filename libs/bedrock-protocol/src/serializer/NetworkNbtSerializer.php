@@ -93,4 +93,24 @@ class NetworkNbtSerializer extends BaseNbtSerializer{
 			$this->writeInt($v); //varint
 		}
 	}
+
+	public function readLongArray() : array{
+		$len = $this->readInt(); //varint
+		if($len < 0){
+			throw new NbtDataException("Array length cannot be less than zero ($len < 0)");
+		}
+		$ret = [];
+		for($i = 0; $i < $len; ++$i){
+			$ret[] = $this->readLong(); //zigzag varint (signed 64-bit)
+		}
+
+		return $ret;
+	}
+
+	public function writeLongArray(array $array) : void{
+		$this->writeInt(count($array)); //varint
+		foreach($array as $v){
+			$this->writeLong($v); //zigzag varint (signed 64-bit)
+		}
+	}
 }

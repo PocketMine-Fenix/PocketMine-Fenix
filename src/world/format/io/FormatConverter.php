@@ -139,12 +139,23 @@ class FormatConverter{
 		$this->logger->info("Discovered $count chunks");
 
 		$counter = 0;
+		$skipped = 0;
 
 		$start = microtime(true);
 		$thisRound = $start;
 		foreach($this->oldProvider->getAllChunks(true, $this->logger) as $coords => $loadedChunkData){
 			[$chunkX, $chunkZ] = $coords;
-			$new->saveChunk($chunkX, $chunkZ, $loadedChunkData->getData(), Chunk::DIRTY_FLAGS_ALL);
+			try{
+				$new->saveChunk($chunkX, $chunkZ, $loadedChunkData->getData(), Chunk::DIRTY_FLAGS_ALL);
+			}catch(\Throwable $e){
+				$skipped++;
+				if($skipped <= 5){
+					$this->logger->error("Skipped chunk $chunkX $chunkZ during conversion: " . $e->getMessage());
+				}elseif($skipped === 6){
+					$this->logger->warning("Further chunk conversion errors will be suppressed");
+				}
+				continue;
+			}
 			$counter++;
 			if(($counter % $this->chunksPerProgressUpdate) === 0){
 				$time = microtime(true);
@@ -156,6 +167,9 @@ class FormatConverter{
 			if(($counter % (2 ** 16)) === 0){
 				$new->doGarbageCollection();
 			}
+		}
+		if($skipped > 0){
+			$this->logger->warning("$skipped chunks could not be converted (unsupported blocks) and were skipped");
 		}
 		$total = microtime(true) - $start;
 		$this->logger->info("Converted $counter / $counter chunks in " . round($total, 3) . " seconds (" . floor($counter / $total) . " chunks/sec)");

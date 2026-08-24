@@ -25,11 +25,47 @@ namespace pocketmine\world\format\io\region;
 
 use pocketmine\block\Block;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\convert\BlockStateDictionary;
+use pocketmine\utils\Filesystem;
+use pocketmine\world\format\io\data\JavaWorldData;
+use pocketmine\world\format\io\LoadedChunkData;
 use pocketmine\world\format\PalettedBlockArray;
 use pocketmine\world\format\SubChunk;
 
 class Anvil extends RegionWorldProvider{
-	use LegacyAnvilChunkTrait;
+	use LegacyAnvilChunkTrait{
+		LegacyAnvilChunkTrait::deserializeChunk as legacyDeserializeChunk;
+	}
+
+	private ?JavaBlockStateTranslator $modernTranslator = null;
+
+	/**
+	 * Routes each chunk to the correct reader based on its own contents:
+	 * modern (1.18+) chunks carry a "sections" list with block_states compounds,
+	 * while legacy chunks use Level/Sections with Blocks byte arrays.
+	 */
+	public function deserializeChunk(string $data, \Logger $logger) : ?LoadedChunkData{
+		return $this->legacyDeserializeChunk($data, $logger);
+	}
+
+	/**
+	 * Called by LegacyAnvilChunkTrait when a modern (1.18+) chunk is detected.
+	 */
+	protected function deserializeModernJavaChunk(string $data, \Logger $logger) : LoadedChunkData{
+		return ModernJavaAnvilDeserializer::deserialize($data, $this->getModernTranslator());
+	}
+
+	protected function getModernTranslator() : JavaBlockStateTranslator{
+		if($this->modernTranslator === null){
+			$this->modernTranslator = new JavaBlockStateTranslator(
+				BlockStateDictionary::loadFromString(
+					Filesystem::fileGetContents(\pocketmine\BEDROCK_DATA_PATH . 'canonical_block_states.nbt'),
+					Filesystem::fileGetContents(\pocketmine\BEDROCK_DATA_PATH . 'block_state_meta_map.json')
+				)
+			);
+		}
+		return $this->modernTranslator;
+	}
 
 	protected function deserializeSubChunk(CompoundTag $subChunk, PalettedBlockArray $biomes3d, \Logger $logger) : SubChunk{
 		return new SubChunk(Block::EMPTY_STATE_ID, [$this->palettizeLegacySubChunkYZX(
@@ -49,11 +85,16 @@ class Anvil extends RegionWorldProvider{
 	}
 
 	public function getWorldMinY() : int{
-		return 0;
+		return $this->isModernHeightWorld() ? -64 : 0;
 	}
 
 	public function getWorldMaxY() : int{
 		//TODO: add world height options
-		return 256;
+		return $this->isModernHeightWorld() ? 320 : 256;
+	}
+
+	private function isModernHeightWorld() : bool{
+		$worldData = $this->getWorldData();
+		return $worldData instanceof JavaWorldData && $worldData->getDataVersion() >= JavaWorldData::MIN_PALETTE_COMPOUND_DATA_VERSION;
 	}
 }

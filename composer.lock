@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ca92e2c94507c68bb12a431172a4f23",
+    "content-hash": "c74c5b340a43e4c1eb7be934aea9388c",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -540,16 +540,16 @@
         },
         {
             "name": "pocketmine/nbt",
-            "version": "1.2.0",
+            "version": "dev-stable",
             "source": {
                 "type": "git",
-                "url": "https://github.com/pmmp/NBT.git",
-                "reference": "51b8d6a97065fb93e0b4f660b65164b6e1ed2fff"
+                "url": "https://github.com/PocketMine-Fenix/NBT.git",
+                "reference": "e890f40077b27fed1c1918c47eb466636fa1790f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/NBT/zipball/51b8d6a97065fb93e0b4f660b65164b6e1ed2fff",
-                "reference": "51b8d6a97065fb93e0b4f660b65164b6e1ed2fff",
+                "url": "https://api.github.com/repos/PocketMine-Fenix/NBT/zipball/e890f40077b27fed1c1918c47eb466636fa1790f",
+                "reference": "e890f40077b27fed1c1918c47eb466636fa1790f",
                 "shasum": ""
             },
             "require": {
@@ -559,28 +559,36 @@
             },
             "require-dev": {
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "2.1.27",
+                "phpstan/phpstan": "2.1.33",
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-strict-rules": "^2.0",
                 "phpunit/phpunit": "^9.5"
             },
+            "default-branch": true,
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-stable": "1.2.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "pocketmine\\nbt\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "pocketmine\\nbt\\": "tests/phpunit/"
+                }
+            },
             "license": [
                 "LGPL-3.0"
             ],
             "description": "PHP library for working with Named Binary Tags",
             "support": {
-                "issues": "https://github.com/pmmp/NBT/issues",
-                "source": "https://github.com/pmmp/NBT/tree/1.2.0"
+                "source": "https://github.com/PocketMine-Fenix/NBT/tree/stable"
             },
-            "abandoned": true,
-            "time": "2025-09-19T18:09:30+00:00"
+            "time": "2026-08-24T16:21:13+00:00"
         },
         {
             "name": "pocketmine/raklib",
@@ -2748,7 +2756,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "pocketmine/nbt": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

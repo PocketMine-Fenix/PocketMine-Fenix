@@ -44,7 +44,7 @@
       "pocketmine/errorhandler": "^0.7.0",
       "pocketmine/log": "^0.4.0",
       "pocketmine/math": "~1.0.0",
-      "pocketmine/nbt": "~1.2.0",
+      "pocketmine/nbt": "dev-stable#e890f40077b27fed1c1918c47eb466636fa1790f",
       "pocketmine/raklib": "~1.2.0",
       "pocketmine/raklib-ipc": "~1.0.0",
       "pocketmine/snooze": "^0.5.0",
@@ -102,6 +102,10 @@
       ]
    },
    "repositories": [
+      {
+         "type": "vcs",
+         "url":  "https://github.com/PocketMine-Fenix/NBT.git"
+      },
       {
          "type": "path",
          "url":  "libs/bedrock-block-upgrade-schema",

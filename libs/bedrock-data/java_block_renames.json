@@ -1,0 +1,11 @@
+{
+    "_meta": {
+        "generator": "PocketMine-Fenix generate-java-block-mappings.php",
+        "sources": [
+            "PrismarineJS minecraft-data",
+            "GeyserMC mappings"
+        ],
+        "description": "Java block identifier -> Bedrock identifier for blocks whose name differs between editions"
+    },
+    "renames": []
+}

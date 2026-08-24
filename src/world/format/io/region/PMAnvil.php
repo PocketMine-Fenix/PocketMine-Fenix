@@ -25,6 +25,8 @@ namespace pocketmine\world\format\io\region;
 
 use pocketmine\block\Block;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\world\format\io\exception\CorruptedChunkException;
+use pocketmine\world\format\io\LoadedChunkData;
 use pocketmine\world\format\PalettedBlockArray;
 use pocketmine\world\format\SubChunk;
 
@@ -34,6 +36,15 @@ use pocketmine\world\format\SubChunk;
  */
 class PMAnvil extends RegionWorldProvider{
 	use LegacyAnvilChunkTrait;
+
+	/**
+	 * PMAnvil is a Bedrock-only format; modern Java chunks never occur here.
+	 *
+	 * @throws CorruptedChunkException always
+	 */
+	protected function deserializeModernJavaChunk(string $data, \Logger $logger) : ?LoadedChunkData{
+		throw new CorruptedChunkException("Modern Java chunks are not possible in PMAnvil worlds");
+	}
 
 	protected function deserializeSubChunk(CompoundTag $subChunk, PalettedBlockArray $biomes3d, \Logger $logger) : SubChunk{
 		return new SubChunk(Block::EMPTY_STATE_ID, [$this->palettizeLegacySubChunkXZY(
