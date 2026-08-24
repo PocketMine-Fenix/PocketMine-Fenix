@@ -159,6 +159,10 @@ auto-updater:
   preferred-channel: stable
   #When enabled, players with the updatepm permission are told about available updates on join
   notify-ops-on-join: true
+  #How often (minutes) to re-check GitHub for new releases while running. 0 = only at startup
+  check-interval-minutes: 60
+  #When enabled, new releases are downloaded automatically in background so updatepm applies instantly
+  auto-download: false
   #If using a development version, it will suggest changing the channel
   suggest-channels: true
   host: update.pmmp.io

@@ -47,6 +47,8 @@ final class YmlServerProperties{
 	public const AUTO_REPORT_SEND_SETTINGS = 'auto-report.send-settings';
 	public const AUTO_REPORT_USE_HTTPS = 'auto-report.use-https';
 	public const AUTO_UPDATER = 'auto-updater';
+	public const AUTO_UPDATER_AUTO_DOWNLOAD = 'auto-updater.auto-download';
+	public const AUTO_UPDATER_CHECK_INTERVAL_MINUTES = 'auto-updater.check-interval-minutes';
 	public const AUTO_UPDATER_ENABLED = 'auto-updater.enabled';
 	public const AUTO_UPDATER_HOST = 'auto-updater.host';
 	public const AUTO_UPDATER_NOTIFY_OPS_ON_JOIN = 'auto-updater.notify-ops-on-join';

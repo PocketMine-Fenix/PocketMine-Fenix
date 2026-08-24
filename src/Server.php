@@ -1988,6 +1988,10 @@ class Server{
 		$this->asyncPool->collectTasks();
 		Timings::$schedulerAsync->stopTiming();
 
+		if(isset($this->updater)){
+			$this->updater->tick($this->tickCounter);
+		}
+
 		$this->worldManager->tick($this->tickCounter);
 
 		Timings::$connection->startTiming();

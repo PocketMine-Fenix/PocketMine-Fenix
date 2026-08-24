@@ -36,4 +36,6 @@ final class UpdateInfo{
 	public string $details_url;
 	public string $download_url;
 	public string $source_url;
+	/** Release notes (markdown) as published on GitHub Releases. */
+	public string $body = "";
 }

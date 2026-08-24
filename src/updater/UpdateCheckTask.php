@@ -55,7 +55,7 @@ class UpdateCheckTask extends AsyncTask{
 	 * Queries the GitHub Releases API for the latest published release.
 	 *
 	 * @param string $error set to a description of the problem on failure
-	 * @phpstan-return array{version: string, channel: string, date: int, details_url: string, download_url: string}|null
+	 * @phpstan-return array{version: string, channel: string, date: int, details_url: string, download_url: string, body: string}|null
 	 */
 	public static function queryLatestRelease(string &$error) : ?array{
 		$error = "";
@@ -108,12 +108,18 @@ class UpdateCheckTask extends AsyncTask{
 			$date = $timestamp !== false ? $timestamp : 0;
 		}
 
+		$body = "";
+		if(isset($data["body"]) && is_string($data["body"])){
+			$body = $data["body"];
+		}
+
 		return [
 			"version" => ltrim($data["tag_name"], "v"),
 			"channel" => $prerelease === true ? "beta" : "stable",
 			"date" => $date,
 			"details_url" => $detailsUrl,
 			"download_url" => $downloadUrl,
+			"body" => $body,
 		];
 	}
 
@@ -141,6 +147,7 @@ class UpdateCheckTask extends AsyncTask{
 		$info->details_url = $release["details_url"];
 		$info->download_url = $release["download_url"];
 		$info->source_url = VersionInfo::GITHUB_URL;
+		$info->body = $release["body"];
 
 		$this->setResult($info);
 	}

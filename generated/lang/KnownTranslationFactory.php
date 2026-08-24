@@ -2517,6 +2517,10 @@ final class KnownTranslationFactory{
 		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_COMMAND_VERSION, []);
 	}
 
+	public static function pocketmine_permission_command_whatsnew() : Translatable{
+		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_COMMAND_WHATSNEW, []);
+	}
+
 	public static function pocketmine_permission_command_whitelist_add() : Translatable{
 		return new Translatable(KnownTranslationKeys::POCKETMINE_PERMISSION_COMMAND_WHITELIST_ADD, []);
 	}

@@ -23,14 +23,21 @@ declare(strict_types=1);
 
 namespace pocketmine\updater;
 
+use Phar;
 use pocketmine\event\server\UpdateNotifyEvent;
 use pocketmine\Server;
 use pocketmine\utils\VersionString;
 use pocketmine\VersionInfo;
 use pocketmine\YmlServerProperties;
+use function basename;
 use function date;
+use function dirname;
+use function is_file;
 use function strtolower;
+use function time;
 use function ucfirst;
+use const DIRECTORY_SEPARATOR;
+use const PHP_INT_MAX;
 
 /**
  * Checks for updates by querying this project's GitHub Releases.
@@ -39,6 +46,8 @@ class UpdateChecker{
 
 	protected Server $server;
 	protected ?UpdateInfo $updateInfo = null;
+	private ?UpdateInfo $latestKnown = null;
+	private int $nextCheckTime = PHP_INT_MAX;
 	private \Logger $logger;
 
 	public function __construct(Server $server){
@@ -50,6 +59,37 @@ class UpdateChecker{
 		}
 	}
 
+	/**
+	 * Called every tick from Server::tick(). Schedules periodic re-checks
+	 * according to auto-updater.check-interval-minutes (0 disables them).
+	 */
+	public function tick(int $currentTick) : void{
+		if(!$this->server->getConfigGroup()->getPropertyBool(YmlServerProperties::AUTO_UPDATER_ENABLED, true)){
+			return;
+		}
+		$intervalMinutes = $this->server->getConfigGroup()->getPropertyInt(YmlServerProperties::AUTO_UPDATER_CHECK_INTERVAL_MINUTES, 60);
+		if($intervalMinutes <= 0){
+			return;
+		}
+		if($this->nextCheckTime === PHP_INT_MAX){
+			//first tick: schedule the next check relative to the startup check that already ran
+			$this->nextCheckTime = time() + $intervalMinutes * 60;
+			return;
+		}
+		if(time() >= $this->nextCheckTime){
+			$this->nextCheckTime = time() + $intervalMinutes * 60;
+			$this->doCheck();
+		}
+	}
+
+	/**
+	 * Returns information about the latest known release, regardless of whether
+	 * it is newer than the running version. Null until the first check completes.
+	 */
+	public function getLatestKnown() : ?UpdateInfo{
+		return $this->latestKnown;
+	}
+
 	public function checkUpdateError(string $error) : void{
 		$this->logger->debug("Async update check failed due to \"$error\"");
 	}
@@ -58,11 +98,15 @@ class UpdateChecker{
 	 * Callback used at the end of the update checking task
 	 */
 	public function checkUpdateCallback(UpdateInfo $updateInfo) : void{
+		$this->latestKnown = $updateInfo;
 		$this->checkUpdate($updateInfo);
 		if($this->hasUpdate()){
 			(new UpdateNotifyEvent($this))->call();
 			if($this->server->getConfigGroup()->getPropertyBool(YmlServerProperties::AUTO_UPDATER_ON_UPDATE_WARN_CONSOLE, true)){
 				$this->showConsoleUpdate();
+			}
+			if($this->server->getConfigGroup()->getPropertyBool(YmlServerProperties::AUTO_UPDATER_AUTO_DOWNLOAD, false)){
+				$this->preDownloadLatest($updateInfo);
 			}
 		}else{
 			if(!VersionInfo::IS_DEVELOPMENT_BUILD && $this->getChannel() !== "stable"){
@@ -170,5 +214,23 @@ class UpdateChecker{
 	 */
 	public function getChannel() : string{
 		return strtolower($this->server->getConfigGroup()->getPropertyString(YmlServerProperties::AUTO_UPDATER_PREFERRED_CHANNEL, "stable"));
+	}
+
+	private function preDownloadLatest(UpdateInfo $updateInfo) : void{
+		if(Phar::running(false) === "" || $updateInfo->download_url === ""){
+			return;
+		}
+		$currentPhar = Phar::running(false);
+		$targetPath = dirname($currentPhar) . DIRECTORY_SEPARATOR . basename($currentPhar, ".phar") . ".phar.new";
+		if(is_file($targetPath)){
+			return; //already pre-downloaded (or a leftover - /updatepm will validate it)
+		}
+		$this->logger->info("Pre-downloading update " . $updateInfo->base_version . " in background...");
+		$this->server->getAsyncPool()->submitTask(new AutoUpdateDownloadTask(
+			$this->logger,
+			$updateInfo->download_url,
+			$updateInfo->base_version,
+			$targetPath
+		));
 	}
 }

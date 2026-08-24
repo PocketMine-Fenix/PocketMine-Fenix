@@ -22,6 +22,8 @@ Arranca el servidor desde la carpeta `test-server` con `start.ps1`.
 | 2.2 | `updatepm` en consola | Si estás al día: *"You are already running the latest version"* |
 | 2.3 | `upm` (alias) | Igual que 2.2 |
 | 2.4 | Jugador sin OP escribe `/updatepm` | Mensaje de falta de permiso |
+| 2.5 | `whatsnew` en consola (espera ~3 seg tras arranque) | Notas de la última release desde GitHub + enlace *Details* |
+| 2.6 | `changelog` (alias) | Igual que 2.5 |
 
 ## 3. Multiversión (lo importante)
 
@@ -54,6 +56,8 @@ Todas en `pocketmine.yml`:
 | `network.query-multiversion-tag` | `true` | `false` quita el `[MV]` de la lista de servidores |
 | `auto-updater.enabled` | `true` | `false` desactiva comprobaciones de updates |
 | `auto-updater.notify-ops-on-join` | `true` | `false` deja de avisar a los OPs al entrar |
+| `auto-updater.check-interval-minutes` | `60` | Minutos entre re-chequeos mientras corre; `0` = solo al arrancar |
+| `auto-updater.auto-download` | `false` | `true` pre-descarga updates en background (updatepm instantáneo) |
 | `auto-report.enabled` | `false` ahora | Los crashes ya no se suben a ningún archivo externo (se guardan en `crashdumps/`) |
 
 ## 6. Regresión (que nada se haya roto)

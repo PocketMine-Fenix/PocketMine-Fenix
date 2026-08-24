@@ -32,8 +32,15 @@ use pocketmine\utils\TextFormat;
 use pocketmine\utils\VersionString;
 use pocketmine\VersionInfo;
 use function basename;
+use function clearstatcache;
 use function dirname;
+use function file_get_contents;
 use function file_put_contents;
+use function filesize;
+use function is_array;
+use function is_file;
+use function is_string;
+use function json_decode;
 use function rename;
 use function str_starts_with;
 use function strlen;
@@ -74,7 +81,8 @@ class SelfUpdateTask extends AsyncTask{
 			return;
 		}
 
-		if(VersionInfo::VERSION()->compare($newVersion) >= 0){
+		//NOTE: compare() returns > 0 when $newVersion is NEWER than the running version
+		if(VersionInfo::VERSION()->compare($newVersion) <= 0){
 			$this->alreadyLatest = true;
 			return;
 		}
@@ -85,10 +93,16 @@ class SelfUpdateTask extends AsyncTask{
 			return;
 		}
 
-		$error = "";
-		$response = Internet::getURL($release["download_url"], 600, [], $error);
+		//Fast path: the file may already have been pre-downloaded by the background
+		//updater (auto-updater.auto-download) - reuse it if it matches this release.
+		if($this->tryReusePreDownloaded($release["version"])){
+			return;
+		}
+
+		$curlError = null;
+		$response = Internet::getURL($release["download_url"], 600, [], $curlError);
 		if($response === null){
-			$this->error = "Download failed: " . ($error !== "" ? $error : "unknown error");
+			$this->error = "Download failed: " . (is_string($curlError) && $curlError !== "" ? $curlError : "unknown error");
 			return;
 		}
 		$body = $response->getBody();
@@ -99,6 +113,23 @@ class SelfUpdateTask extends AsyncTask{
 		if(file_put_contents($this->targetPath, $body) !== strlen($body)){
 			$this->error = "Could not write downloaded PHAR to disk (check folder permissions)";
 		}
+	}
+
+	private function tryReusePreDownloaded(string $expectedVersion) : bool{
+		$metaFile = $this->targetPath . ".meta";
+		if(!is_file($this->targetPath) || !is_file($metaFile)){
+			return false;
+		}
+		$raw = file_get_contents($metaFile);
+		if($raw === false){
+			return false;
+		}
+		$meta = json_decode($raw, true);
+		if(!is_array($meta) || !isset($meta["version"]) || !is_string($meta["version"]) || $meta["version"] !== $expectedVersion){
+			return false;
+		}
+		clearstatcache(true, $this->targetPath);
+		return filesize($this->targetPath) >= self::MIN_PHAR_SIZE;
 	}
 
 	public function onCompletion() : void{

@@ -143,6 +143,7 @@ abstract class DefaultPermissions{
 			Names::COMMAND_CLEAR_SELF,
 			Names::COMMAND_TELL,
 			Names::COMMAND_VERSION,
+			Names::COMMAND_WHATSNEW,
 		] as $permission){
 			self::registerNoArgsDesc($permission, [$everyoneRoot]);
 		}
