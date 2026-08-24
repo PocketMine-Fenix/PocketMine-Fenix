@@ -212,6 +212,10 @@ class NetworkSession{
 	private string $noisyPacketBuffer = "";
 	private int $noisyPacketsDropped = 0;
 
+	/** Reused encoding buffers to avoid per-packet allocations on the hot send path. */
+	private ?ByteBufferWriter $sendPacketWriter = null;
+	private ?ByteBufferWriter $batchWriter = null;
+
 	public function __construct(
 		private Server $server,
 		private NetworkSessionManager $manager,
@@ -645,7 +649,7 @@ class NetworkSession{
 			if($ackReceiptResolver !== null){
 				$this->sendBufferAckPromises[] = $ackReceiptResolver;
 			}
-			$writer = new ByteBufferWriter();
+			$writer = $this->sendPacketWriter ??= new ByteBufferWriter();
 			foreach($packets as $evPacket){
 				$writer->clear(); //memory reuse let's gooooo
 				$this->addToSendBuffer(self::encodePacketTimed($writer, $this->getProtocolId(), $evPacket));
@@ -708,7 +712,8 @@ class NetworkSession{
 					$syncMode = false;
 				}
 
-				$stream = new ByteBufferWriter();
+				$stream = $this->batchWriter ??= new ByteBufferWriter();
+				$stream->clear();
 				PacketBatch::encodeRaw($stream, $this->sendBuffer);
 
 				if($this->enableCompression){

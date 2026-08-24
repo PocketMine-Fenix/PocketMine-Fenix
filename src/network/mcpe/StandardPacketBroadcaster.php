@@ -34,6 +34,10 @@ use function spl_object_id;
 use function strlen;
 
 final class StandardPacketBroadcaster implements PacketBroadcaster{
+	/** Reused encoding buffers - this class is only used from the main thread. */
+	private ?ByteBufferWriter $packetWriter = null;
+	private ?ByteBufferWriter $batchWriter = null;
+
 	public function __construct(
 		private Server $server,
 		private int $protocolId
@@ -64,7 +68,7 @@ final class StandardPacketBroadcaster implements PacketBroadcaster{
 
 		$totalLength = 0;
 		$packetBuffers = [];
-		$writer = new ByteBufferWriter();
+		$writer = $this->packetWriter ??= new ByteBufferWriter();
 		foreach($packets as $packet){
 			$writer->clear(); //memory reuse let's gooooo
 			$buffer = NetworkSession::encodePacketTimed($writer, $this->protocolId, $packet);
@@ -79,7 +83,8 @@ final class StandardPacketBroadcaster implements PacketBroadcaster{
 			$threshold = $compressor->getCompressionThreshold();
 			if(count($compressorTargets) > 1 && $threshold !== null && $totalLength >= $threshold){
 				//do not prepare shared batch unless we're sure it will be compressed
-				$stream = new ByteBufferWriter();
+				$stream = $this->batchWriter ??= new ByteBufferWriter();
+				$stream->clear();
 				PacketBatch::encodeRaw($stream, $packetBuffers);
 				$batchBuffer = $stream->getData();
 
