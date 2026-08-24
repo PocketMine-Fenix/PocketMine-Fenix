@@ -983,6 +983,12 @@ class Server{
 			$this->memoryManager = new MemoryManager($this);
 
 			$this->logger->info($this->language->translate(KnownTranslationFactory::pocketmine_server_start(TextFormat::AQUA . $this->getVersion() . TextFormat::RESET)));
+			$this->logger->info(sprintf(
+				"Multi-version support: accepting client protocols from %d up to %d (%d versions supported)",
+				min(ProtocolInfo::ACCEPTED_PROTOCOL),
+				ProtocolInfo::CURRENT_PROTOCOL,
+				count(ProtocolInfo::ACCEPTED_PROTOCOL)
+			));
 
 			if(($poolSize = $this->configGroup->getPropertyString(Yml::SETTINGS_ASYNC_WORKERS, "auto")) === "auto"){
 				$poolSize = 2;
@@ -1144,7 +1150,7 @@ class Server{
 			$this->worldManager->setAutoSave($this->configGroup->getConfigBool(ServerProperties::AUTO_SAVE, $this->worldManager->getAutoSave()));
 			$this->worldManager->setAutoSaveInterval($this->configGroup->getPropertyInt(Yml::TICKS_PER_AUTOSAVE, $this->worldManager->getAutoSaveInterval()));
 
-			$this->updater = new UpdateChecker($this, $this->configGroup->getPropertyString(Yml::AUTO_UPDATER_HOST, "update.pmmp.io"));
+			$this->updater = new UpdateChecker($this);
 
 			$this->queryInfo = new QueryInfo($this);
 

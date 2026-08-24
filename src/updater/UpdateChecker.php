@@ -6,7 +6,7 @@
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___/     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -32,17 +32,18 @@ use function date;
 use function strtolower;
 use function ucfirst;
 
+/**
+ * Checks for updates by querying this project's GitHub Releases.
+ */
 class UpdateChecker{
 
 	protected Server $server;
-	protected string $endpoint;
 	protected ?UpdateInfo $updateInfo = null;
 	private \Logger $logger;
 
-	public function __construct(Server $server, string $endpoint){
+	public function __construct(Server $server){
 		$this->server = $server;
 		$this->logger = new \PrefixedLogger($server->getLogger(), "Update Checker");
-		$this->endpoint = "http://$endpoint/api/";
 
 		if($server->getConfigGroup()->getPropertyBool(YmlServerProperties::AUTO_UPDATER_ENABLED, true)){
 			$this->doCheck();
@@ -92,7 +93,9 @@ class UpdateChecker{
 		];
 
 		$messages[] = "Details: " . $this->updateInfo->details_url;
-		$messages[] = "Download: " . $this->updateInfo->download_url;
+		if($this->updateInfo->download_url !== ""){
+			$messages[] = "Download: " . $this->updateInfo->download_url;
+		}
 
 		$this->printConsoleMessage($messages, \LogLevel::WARNING);
 	}
@@ -131,7 +134,11 @@ class UpdateChecker{
 	 * Schedules an AsyncTask to check for an update.
 	 */
 	public function doCheck() : void{
-		$this->server->getAsyncPool()->submitTask(new UpdateCheckTask($this, $this->endpoint, $this->getChannel()));
+		$this->logger->debug("Checking for updates from GitHub Releases");
+		$this->server->getAsyncPool()->submitTask(new UpdateCheckTask(
+			$this,
+			UpdateCheckTask::apiUrlFromGithubUrl(VersionInfo::GITHUB_URL)
+		));
 	}
 
 	/**
@@ -147,10 +154,17 @@ class UpdateChecker{
 			return;
 		}
 
-		if($currentVersion->getBuild() > 0 && $currentVersion->compare($newVersion) > 0){
+		if(strtolower($this->getChannel()) === "stable" && strtolower($updateInfo->channel) !== "stable"){
+			//prerelease available, but this server prefers stable channel
+			$this->logger->debug("A prerelease ($newVersion) is available but preferred-channel is stable");
+			return;
+		}
+
+		//NOTE: compare() returns > 0 when $newVersion (the target) is newer than the current version
+		if($currentVersion->compare($newVersion) > 0){
 			$this->updateInfo = $updateInfo;
 		}else{
-			$this->logger->debug("API reported version is an older version or the same version (" . $newVersion->getFullVersion() . "), not showing notification");
+			$this->logger->debug("Latest release (" . $newVersion->getFullVersion() . ") is not newer than the current version, not showing notification");
 		}
 	}
 
@@ -159,12 +173,5 @@ class UpdateChecker{
 	 */
 	public function getChannel() : string{
 		return strtolower($this->server->getConfigGroup()->getPropertyString(YmlServerProperties::AUTO_UPDATER_PREFERRED_CHANNEL, "stable"));
-	}
-
-	/**
-	 * Returns the host used for update checks.
-	 */
-	public function getEndpoint() : string{
-		return $this->endpoint;
 	}
 }

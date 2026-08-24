@@ -46,6 +46,11 @@ final class GarbageCollectorManager{
 	private const GC_THRESHOLD_MAX = 1_000_000_000;
 	private const GC_THRESHOLD_DEFAULT = 10_001;
 	private const GC_THRESHOLD_STEP = 10_000;
+	/**
+	 * GC runs faster than this are logged at debug level to avoid console spam.
+	 * Slow runs (possible lag spikes) are still surfaced at info level.
+	 */
+	private const LOG_SLOW_RUN_MS = 10.0;
 
 	private int $threshold = self::GC_THRESHOLD_DEFAULT;
 	private int $collectionTimeTotalNs = 0;
@@ -99,7 +104,7 @@ final class GarbageCollectorManager{
 		$time = $end - $start;
 		$this->collectionTimeTotalNs += $time;
 		$this->runs++;
-		$this->logger->info(sprintf(
+		$message = sprintf(
 			"Run #%d took %s ms (%s -> %s roots, %s cycles collected) - cumulative GC time: %s ms",
 			$this->runs,
 			number_format($time / 1_000_000, 2),
@@ -107,7 +112,12 @@ final class GarbageCollectorManager{
 			$rootsAfter,
 			$cycles,
 			number_format($this->collectionTimeTotalNs / 1_000_000, 2)
-		));
+		);
+		if($time / 1_000_000 >= self::LOG_SLOW_RUN_MS){
+			$this->logger->info($message);
+		}else{
+			$this->logger->debug($message);
+		}
 
 		return $cycles;
 	}

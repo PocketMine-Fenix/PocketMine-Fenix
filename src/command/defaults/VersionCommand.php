@@ -64,6 +64,7 @@ class VersionCommand extends VanillaCommand{
 				TextFormat::GREEN . ProtocolInfo::MINECRAFT_VERSION_NETWORK . TextFormat::RESET,
 				TextFormat::GREEN . ProtocolInfo::CURRENT_PROTOCOL . TextFormat::RESET
 			));
+			$sender->sendMessage("Multi-version support: " . TextFormat::GREEN . count(ProtocolInfo::ACCEPTED_PROTOCOL) . " client protocols supported (" . min(ProtocolInfo::ACCEPTED_PROTOCOL) . " - " . ProtocolInfo::CURRENT_PROTOCOL . ")" . TextFormat::RESET);
 			$sender->sendMessage(KnownTranslationFactory::pocketmine_command_version_phpVersion(TextFormat::GREEN . PHP_VERSION . TextFormat::RESET));
 
 			$jitMode = Utils::getOpcacheJitMode();

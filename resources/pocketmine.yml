@@ -147,12 +147,12 @@ anonymous-statistics:
   host: stats.pocketmine.net
 
 auto-updater:
-  #Disabled by default: PocketMine-Fenix releases are announced on GitHub.
-  #The legacy pmmp update API is no longer maintained.
-  enabled: false
+  #Checks GitHub Releases for newer PocketMine-Fenix versions and warns in the console.
+  #Set to false if you prefer to update manually.
+  enabled: true
   on-update:
     warn-console: true
-  #Can be development, alpha, beta or stable.
+  #Can be development, alpha, beta or stable. Stable ignores prerelease notifications.
   preferred-channel: stable
   #If using a development version, it will suggest changing the channel
   suggest-channels: true
