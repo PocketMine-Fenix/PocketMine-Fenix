@@ -135,8 +135,9 @@ ticks-per:
   autosave: 6000
 
 auto-report:
-  #Send crash reports for processing
-  enabled: true
+  #Send crash reports to an external archive. Crash dumps are always saved locally in crashdumps/.
+  #The default external archive belongs to the original PocketMine project and is disabled here.
+  enabled: false
   send-code: true
   send-settings: true
   send-phpinfo: false

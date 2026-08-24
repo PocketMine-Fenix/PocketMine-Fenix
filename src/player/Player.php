@@ -155,6 +155,7 @@ use function count;
 use function explode;
 use function floor;
 use function get_class;
+use function intdiv;
 use function is_int;
 use function is_string;
 use function max;
@@ -163,6 +164,7 @@ use function microtime;
 use function min;
 use function preg_match;
 use function spl_object_id;
+use function sprintf;
 use function sqrt;
 use function str_starts_with;
 use function strlen;
@@ -226,6 +228,9 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	protected ?NetworkSession $networkSession;
 
 	public bool $spawned = false;
+
+	/** Timestamp (microseconds) of the moment the player first spawned, used for session-length reporting. */
+	private float $firstSpawnTime = 0.0;
 
 	protected string $username;
 	protected string $displayName;
@@ -945,6 +950,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			return;
 		}
 		$this->spawned = true;
+		$this->firstSpawnTime = microtime(true);
 		$this->recheckBroadcastPermissions();
 		$this->getPermissionRecalculationCallbacks()->add(function(array $changedPermissionsOldValues) : void{
 			if(isset($changedPermissionsOldValues[Server::BROADCAST_CHANNEL_ADMINISTRATIVE]) || isset($changedPermissionsOldValues[Server::BROADCAST_CHANNEL_USERS])){
@@ -2451,6 +2457,14 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		$ev->call();
 		if(($quitMessage = $ev->getQuitMessage()) !== ""){
 			$this->server->broadcastMessage($quitMessage);
+		}
+		if($this->firstSpawnTime > 0){
+			$sessionSeconds = (int) (microtime(true) - $this->firstSpawnTime);
+			$this->logger->info(sprintf(
+				"Session length: %d min %d sec",
+				intdiv($sessionSeconds, 60),
+				$sessionSeconds % 60
+			));
 		}
 		$this->save();
 
