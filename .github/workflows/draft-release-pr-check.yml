@@ -67,6 +67,8 @@ jobs:
         run: composer install --no-dev --prefer-dist --no-interaction --ignore-platform-reqs
 
       - name: Check author permissions
+        #only applicable to pull_request events; tag pushes are done by maintainers directly
+        if: github.event_name == 'pull_request'
         id: check-permission
         uses: actions-cool/check-user-permission@v2
         with:
@@ -78,7 +80,7 @@ jobs:
 
       - name: Abort if user permissions are insufficient
         #user doesn't have permission or is a bot
-        if: steps.check-permission.outputs.require-result != 'true' || steps.check-permission.outputs.check-result != 'false'
+        if: github.event_name == 'pull_request' && (steps.check-permission.outputs.require-result != 'true' || steps.check-permission.outputs.check-result != 'false')
         run: |
           echo "::error::This user is not authorized to trigger releases"
           exit 1
