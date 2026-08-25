@@ -196,21 +196,19 @@ final class ModernJavaAnvilDeserializer{
 			return array_fill(0, $total, 0);
 		}
 		$bits = max(4, (int) ceil(log(max(2, $paletteCount), 2)));
-		$entriesPerLong = (int) (64 / $bits);
+		$entriesPerLong = intdiv(64, $bits);
 		$mask = (1 << $bits) - 1;
 
 		$result = [];
-		$index = 0;
 		foreach($longs as $long){
-			//PHP has no unsigned shift-right for 64-bit ints; use the bit string
-			$bitsStr = str_pad(decbin($long % (2 ** 64)), 64, '0', STR_PAD_LEFT);
-			for($slot = 0; $slot < $entriesPerLong && $index < $total; ++$slot){
+			//convert to unsigned 64-bit representation using bit string (handles negative/signed values)
+			$bitsStr = sprintf('%064b', $long);
+			for($slot = 0; $slot < $entriesPerLong; ++$slot){
+				if(count($result) >= $total){
+					return $result;
+				}
 				$hi = 64 - ($slot + 1) * $bits;
-				$result[] = (int) bindec(substr($bitsStr, $hi, $bits));
-				++$index;
-			}
-			if($index >= $total){
-				break;
+				$result[] = (int) bindec(substr($bitsStr, $hi, $bits)) & $mask;
 			}
 		}
 		while(count($result) < $total){
