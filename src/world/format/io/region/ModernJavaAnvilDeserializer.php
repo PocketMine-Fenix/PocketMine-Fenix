@@ -41,16 +41,15 @@ use function array_keys;
 use function bindec;
 use function ceil;
 use function count;
-use function decbin;
 use function implode;
+use function intdiv;
 use function is_string;
 use function log;
 use function max;
 use function pack;
-use function str_pad;
+use function sprintf;
 use function substr;
 use function zlib_decode;
-use const STR_PAD_LEFT;
 
 /**
  * Deserialises post-flattening Java Edition Anvil chunks (Minecraft 1.18+,

@@ -6,7 +6,7 @@
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___/     |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,12 +24,12 @@ declare(strict_types=1);
 namespace pocketmine\world\format\io\region;
 
 use pocketmine\data\bedrock\block\BlockStateData;
-use pocketmine\utils\Filesystem;
 use pocketmine\utils\Utils;
 use pocketmine\world\format\io\GlobalBlockStateHandlers;
 use function count;
+use function implode;
 use function ksort;
-use function strlen;
+use function str_starts_with;
 
 /**
  * Translates Java Edition blockstate identifiers into Fenix internal
