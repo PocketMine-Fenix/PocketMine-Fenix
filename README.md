@@ -97,6 +97,15 @@ If you want plain vanilla survival, use the [official Bedrock server software](h
 2. Run the appropriate start script (`start.cmd` / `start.ps1` on Windows, `start.sh` on Linux/macOS)
 3. Connect from any supported Minecraft Bedrock client version
 
+### Quick commands for server admins
+
+| Command | Where | What it does |
+|---------|-------|--------------|
+| `updatepm` | Console or OP in-game | Downloads and installs the latest version |
+| `whatsnew` | Console or in-game | Shows release notes from GitHub |
+| `status` | Console or in-game | Shows TPS, memory, client versions, worlds |
+| `version` | Console or in-game | Shows software version and supported protocols |
+
 Plugin development: plugins using the PocketMine-MP 5.x API work as-is -- find them on [Poggit](https://poggit.pmmp.io/plugins).
 
 ## Documentation
