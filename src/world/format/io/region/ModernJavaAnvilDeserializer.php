@@ -29,6 +29,7 @@ use pocketmine\nbt\BigEndianNbtSerializer;
 use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\LongArrayTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\utils\Utils;
 use pocketmine\world\format\Chunk;
 use pocketmine\world\format\io\ChunkData;
@@ -116,9 +117,12 @@ final class ModernJavaAnvilDeserializer{
 			$decodeErrors = [];
 			/** @var list<CompoundTag> $paletteEntries */
 			$paletteEntries = $paletteList->getValue();
-			foreach($paletteEntries as $entry){
+		foreach($paletteEntries as $entry){
 				if(!$entry instanceof CompoundTag){
 					continue;
+				}
+				if(!$entry->getTag('Name') instanceof StringTag){
+					continue; //malformed entry - skip rather than crash
 				}
 				$name = $entry->getString('Name');
 				$props = [];
